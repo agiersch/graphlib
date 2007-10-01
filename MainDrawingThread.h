@@ -6,6 +6,7 @@
 class MainDrawingThread: public DrawingThreadCore {
 public:
     MainDrawingThread(int argc, char **argv);
+    ~MainDrawingThread();
 
     int runForReal();
     int runForReal(int argc, char **argv);

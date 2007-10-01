@@ -7,6 +7,10 @@ DrawingThreadCore::DrawingThreadCore(int argc_, char **argv_)
 {
 }
 
+DrawingThreadCore::~DrawingThreadCore()
+{
+}
+
 void DrawingThreadCore::run()
 {
     exit(this->runForReal(argc, argv));

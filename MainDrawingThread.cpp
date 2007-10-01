@@ -7,6 +7,10 @@ MainDrawingThread::MainDrawingThread(int argc, char **argv)
 {
 }
 
+MainDrawingThread::~MainDrawingThread()
+{
+}
+
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);

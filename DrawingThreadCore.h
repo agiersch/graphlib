@@ -17,7 +17,7 @@ protected:
 
 public:
     DrawingThreadCore(int argc, char **argv);
-
+    virtual ~DrawingThreadCore();
     void run();
 
 };
