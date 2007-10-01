@@ -21,36 +21,23 @@
  */
 
 
-#include <QApplication>
-#include <QImage>
-#include <QLabel>
-#include <QPaintEvent>
-#include <QPainter>
-#include <QPixmap>
-#include <QThread>
-#include <Qt>
+#include <DrawingArea.h>
+#include <MainDrawingThread.h>
 
-#include <cmath>
-#include <iostream>
-#include <string>
+int main_thread(int, char **)
+{
+    // >>> insert main drawing code here <<<
+    return 0;
+}
 
 //============================================================
-// DrawingAreaInterface
 
-class DrawingAreaInterface {
-public:
-    static const int DEFAULT_WIDTH = 640;
-    static const int DEFAULT_HEIGHT = 480;
-
-    virtual ~DrawingAreaInterface() { }
-
-    virtual void setColor(float red, float green, float blue) = 0;
-    virtual void drawPoint(int x, int y) = 0;
-    virtual void drawLine(int x1, int y1, int x2, int y2) = 0;
-    
-    virtual void wait() = 0;
-    virtual void waitAll() = 0;
-};
+//**********************************************************************
+//**********************************************************************
+//**********************************************************************
+//**********************************************************************
+//**********************************************************************
+#if 0
 
 //============================================================
 // WindowCore
@@ -240,100 +227,6 @@ void QtDrawingArea::init(int width, int height, const char *title)
 
 
 //============================================================
-class DrawingArea: public DrawingAreaInterface {
-private:
-    QImage *image;
-    QPainter *painter;
-
-public:
-    DrawingArea(int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT);
-    ~DrawingArea();
-
-    int width() const
-    {
-        return image->width();
-    }
-
-    int height() const
-    {
-        return image->height();
-    }
-
-    void setColor(const QColor &color)
-    {
-        QPen pen(painter->pen());
-        pen.setColor(color);
-        painter->setPen(pen);
-    }
-
-    void setColor(float red, float green, float blue)
-    {
-        QColor color;
-        color.setRgbF(red, green, blue);
-        this->setColor(color);
-    }
-
-    void drawPoint(int x, int y)
-    {
-        painter->drawPoint(x, y);
-    }
-
-    void drawLine(int x1, int y1, int x2, int y2)
-    {
-        painter->drawLine(x1, y1, x2, y2);
-    }
-
-};
-
-DrawingArea::DrawingArea(int width, int height)
-{
-    image = new QImage(width, height, QImage::Format_RGB32);
-    image->fill(QColor(Qt::white).rgb());
-    painter = new QPainter(image);
-}
-
-DrawingArea::~DrawingArea()
-{
-    delete painter;
-    delete image;
-}
-
-//============================================================
-class DrawingThreadCore: public QThread {
-public:
-    void run();
-    virtual void runForReal() = 0;
-};
-
-void DrawingThreadCore::run()
-{
-    this->runForReal();
-}
-
-//============================================================
-class MainDrawingThread: public DrawingThreadCore {
-public:
-    void runForReal();
-};
-
-void MainDrawingThread::runForReal()
-{
-    // >>> insert main drawing code here <<<
-}
-
-//============================================================
-int main(int argc, char *argv[])
-{
-    QApplication application(argc, argv);
-    MainDrawingThread mainDrawingThread;
-
-    mainDrawingThread.start();
-
-    return application.exec();
-}
-
-//============================================================
-#if 0
 
 /* paramètres par défaut */
 int larg = 600;
