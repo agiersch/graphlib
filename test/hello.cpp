@@ -240,6 +240,100 @@ void QtDrawingArea::init(int width, int height, const char *title)
 
 
 //============================================================
+class DrawingArea: public DrawingAreaInterface {
+private:
+    QImage *image;
+    QPainter *painter;
+
+public:
+    DrawingArea(int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT);
+    ~DrawingArea();
+
+    int width() const
+    {
+        return image->width();
+    }
+
+    int height() const
+    {
+        return image->height();
+    }
+
+    void setColor(const QColor &color)
+    {
+        QPen pen(painter->pen());
+        pen.setColor(color);
+        painter->setPen(pen);
+    }
+
+    void setColor(float red, float green, float blue)
+    {
+        QColor color;
+        color.setRgbF(red, green, blue);
+        this->setColor(color);
+    }
+
+    void drawPoint(int x, int y)
+    {
+        painter->drawPoint(x, y);
+    }
+
+    void drawLine(int x1, int y1, int x2, int y2)
+    {
+        painter->drawLine(x1, y1, x2, y2);
+    }
+
+};
+
+DrawingArea::DrawingArea(int width, int height)
+{
+    image = new QImage(width, height, QImage::Format_RGB32);
+    image->fill(QColor(Qt::white).rgb());
+    painter = new QPainter(image);
+}
+
+DrawingArea::~DrawingArea()
+{
+    delete painter;
+    delete image;
+}
+
+//============================================================
+class DrawingThreadCore: public QThread {
+public:
+    void run();
+    virtual void runForReal() = 0;
+};
+
+void DrawingThreadCore::run()
+{
+    this->runForReal();
+}
+
+//============================================================
+class MainDrawinThread: public DrawingThreadCore {
+public:
+    void runForReal();
+};
+
+void MainDrawingThread::runForReal()
+{
+    // >>> insert main drawing code here <<<
+}
+
+//============================================================
+int main(int argc, char *argv[])
+{
+    QApplication application(argc, argv);
+    MainDrawingThread mainDrawingThread;
+
+    mainDrawingThread.start();
+
+    return application.exec();
+}
+
+//============================================================
+#if 0
 
 /* paramètres par défaut */
 int larg = 600;
@@ -251,7 +345,7 @@ float Imax = 1.3;
 
 int maxiter = 100;
 
-int main(int argc, char *argv[])
+void DrawingThread::run()
 {
     int x, y;                   /* le pixel considéré */
     float cr, ci;               /* le complexe correspondant */
@@ -261,7 +355,7 @@ int main(int argc, char *argv[])
     float rouge, vert, bleu;
     int i;
 
-    QtDrawingArea fen(argc, argv, larg, haut);
+    //    QtDrawingArea fen(argc, argv, larg, haut);
 
     pr = (Rmax - Rmin) / larg;
     pi = (Imax - Imin) / larg;
@@ -305,51 +399,9 @@ int main(int argc, char *argv[])
             ci += pi;
         }
         cr += pr;
-        fen.flush();
+        //        fen.flush();
     }
-    fen.wait();
+    //    fen.wait();
 }
-#if 0
-    int err = 0;
-    std::cerr << err++;
-    for (int x = 0; x < fen.width(); x++) 
-        for (int y = 0; y < fen.height(); y++)
-            float dx = x;
-            float dy = y;
-            float r = sqrt(dx * dx + dy * dy) / fen.width();
-            dx = fen.width() - 1 - x;
-            float g = sqrt(dx * dx + dy * dy) / fen.width();
-            dx = fen.width() / 2 - x;
-            dy = fen.height() - y;
-            float b = sqrt(dx * dx + dy * dy) / fen.height();
-            if (r > 1.0)  r = 1.0;
-            if (g > 1.0)  g = 1.0;
-            if (b > 1.0)  b = 1.0;
-            fen.setColor(r, g, b);
-            fen.drawPoint(x, y);
-        }
-    std::cerr << err++;
-    fen.flush();
-    std::cerr << err++;
-    fen.setColor(0.0, 0.0, 1.0);
-    for (int x = 0; x < 10; x++)
-        for (int y = 0; y < 10; y++)
-            fen.drawPoint(x, y);
-    std::cerr << err++;
-    fen.flush();
-    std::cerr << err++;
-    fen.setColor(0.0, 0.0, 0.0);
-    for (int z = 100; z <= 300; z += 4) {
-        fen.drawLine(150, 150, z, 100);
-        fen.drawLine(150, 150, z, 300);
-        fen.drawLine(150, 150, 100, z);
-        fen.drawLine(150, 150, 300, z);
-    }
-    std::cerr << "OOOO\n";
-    QtDrawingArea fen2;
-    fen.wait();
-    std::cerr << "qwewet\n";
 
-    fen.waitAll();
-}
 #endif
