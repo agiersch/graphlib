@@ -311,7 +311,7 @@ void DrawingThreadCore::run()
 }
 
 //============================================================
-class MainDrawinThread: public DrawingThreadCore {
+class MainDrawingThread: public DrawingThreadCore {
 public:
     void runForReal();
 };
