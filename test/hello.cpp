@@ -24,9 +24,19 @@
 #include <DrawingArea.h>
 #include <MainDrawingThread.h>
 
-int main_thread(int, char **)
+#include <iostream>
+
+int main_thread(int argc, char **argv)
 {
     // >>> insert main drawing code here <<<
+    std::cout << "[" << argc << "]\n";
+    for (int i = 0; i < argc; i++)
+        std::cout << "  <" << argv[i] << ">\n";
+    while (true) {
+        sleep(1);
+        std::cout << '.' << std::flush;
+    }
+
     return 0;
 }
 

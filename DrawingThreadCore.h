@@ -5,19 +5,9 @@
 
 class DrawingThreadCore: public QThread {
 private:
-    int argc;
-    char **argv;
+    virtual int runForReal() = 0;
 
 public:
-    class MissingImplementationException { };
-
-protected:
-    virtual int runForReal();
-    virtual int runForReal(int argc, char **argv);
-
-public:
-    DrawingThreadCore(int argc, char **argv);
-    virtual ~DrawingThreadCore();
     void run();
 
 };

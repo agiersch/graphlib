@@ -2,13 +2,16 @@
 
 #include <QApplication>
 
-MainDrawingThread::MainDrawingThread(int argc, char **argv)
-    : DrawingThreadCore(argc, argv)
+MainDrawingThread::MainDrawingThread(int argc_, char **argv_)
+    : DrawingThreadCore()
+    , argc(argc_)
+    , argv(argv_)
 {
 }
 
-MainDrawingThread::~MainDrawingThread()
+int MainDrawingThread::runForReal()
 {
+    return MainDrawingThread::main(argc, argv);
 }
 
 int main(int argc, char *argv[])
