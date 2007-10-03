@@ -29,10 +29,8 @@ public:
         
 };
 
-#define main_thread(...)                                \
-    /* int */ main_thread(__VA_ARGS__);                 \
+#define MAIN_DRAWING_THREAD(function)                   \
     int (*MainDrawingThread::main)(int, char **) =      \
-        MainDrawingThread::mainWrapper<main_thread>;    \
-    int main_thread(__VA_ARGS__)
+        MainDrawingThread::mainWrapper<function>;
 
 #endif // !MAIN_DRAWING_THREAD_H

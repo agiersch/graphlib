@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-int main_thread(int argc, char **argv)
+int main_drawing_thread(int argc, char **argv)
 {
     // >>> insert main drawing code here <<<
     std::cout << "[" << argc << "]\n";
@@ -39,6 +39,8 @@ int main_thread(int argc, char **argv)
 
     return 0;
 }
+
+MAIN_DRAWING_THREAD(main_drawing_thread);
 
 //============================================================
 
