@@ -37,4 +37,6 @@ void DrawingWindow::initialize()
     setFocusPolicy(Qt::StrongFocus);
     setFixedSize(drawingArea.getImage().size());
     setAttribute(Qt::WA_OpaquePaintEvent);
+    connect(&drawingArea, SIGNAL(update()), this, SLOT(update()));
+
 }

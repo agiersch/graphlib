@@ -58,9 +58,6 @@ int main(int argc, char *argv[])
     DrawingWindow drawingWindow(drawingArea);
     DrawingThread drawingThread(drawingArea, main_drawing_thread);
 
-    QObject::connect(&drawingArea, SIGNAL(update()),
-                     &drawingWindow, SLOT(update()));
-
     drawingWindow.show();
     drawingThread.start();
 
