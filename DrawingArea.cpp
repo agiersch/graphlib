@@ -40,10 +40,17 @@ void DrawingArea::setColor(float red, float green, float blue)
 void DrawingArea::drawPoint(int x, int y)
 {
     painter->drawPoint(x, y);
+    emit update();
 }
 
 void DrawingArea::drawLine(int x1, int y1, int x2, int y2)
 {
     painter->drawLine(x1, y1, x2, y2);
+    emit update();
+}
+
+const QImage &DrawingArea::getImage() const
+{
+    return *image;
 }
 
