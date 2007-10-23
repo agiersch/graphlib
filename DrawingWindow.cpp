@@ -1,35 +1,58 @@
 #include "DrawingWindow.h"
 #include <QPainter>
+#include <QPaintEvent>
 
 #include <iostream>
 
-DrawingWindow::DrawingWindow(const DrawingArea &a)
+DrawingWindow::DrawingWindow(DrawingArea &a)
     : QWidget()
     , drawingArea(a)
+    , pixmap(a.size())
 {
     initialize();
 }
 
-DrawingWindow::DrawingWindow(QWidget *parent, const DrawingArea &a)
+DrawingWindow::DrawingWindow(QWidget *parent, DrawingArea &a)
     : QWidget(parent)
     , drawingArea(a)
+    , pixmap(a.size())
 {
     initialize();
 }
 
 DrawingWindow::DrawingWindow(QWidget *parent, Qt::WindowFlags flags,
-                             const DrawingArea &a)
+                             DrawingArea &a)
     : QWidget(parent, flags)
     , drawingArea(a)
+    , pixmap(a.size())
 {
     initialize();
 }
 
-void DrawingWindow::paintEvent(QPaintEvent *)
+void DrawingWindow::paintEvent(QPaintEvent *ev)
 {
-    std::cerr << "paint!\n";
+    QRect rect = ev->rect();
+    drawingArea.lock();
+    if (drawingArea.isDirty()) {
+        QPainter pixmapPainter(&pixmap);
+        pixmapPainter.drawImage(drawingArea.getDirtyRect(),
+                                drawingArea.getImage(),
+                                drawingArea.getDirtyRect());
+        drawingArea.setClean();
+        rect |= drawingArea.getDirtyRect();
+    }
+    drawingArea.unlock();
     QPainter painter(this);
-    painter.drawImage(0, 0, drawingArea.getImage());
+    painter.drawPixmap(0, 0, pixmap);
+}
+
+void DrawingWindow::timerEvent(QTimerEvent *ev)
+{
+    if (ev->timerId() == timer.timerId()) {
+        update();
+    } else {
+        QWidget::timerEvent(ev);
+    }
 }
 
 void DrawingWindow::initialize()
@@ -37,6 +60,5 @@ void DrawingWindow::initialize()
     setFocusPolicy(Qt::StrongFocus);
     setFixedSize(drawingArea.getImage().size());
     setAttribute(Qt::WA_OpaquePaintEvent);
-    connect(&drawingArea, SIGNAL(update()), this, SLOT(update()));
-
+    timer.start(50, this);
 }

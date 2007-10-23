@@ -2,20 +2,26 @@
 #define DRAWING_WINDOW_H
 
 #include "DrawingArea.h"
+#include <QPixmap>
+#include <QTimer>
 #include <QWidget>
 
 class DrawingWindow: public QWidget {
+/*     Q_OBJECT */
+
 public:
-    DrawingWindow(const DrawingArea &a);
-    DrawingWindow(QWidget *parent, const DrawingArea &a);
-    DrawingWindow(QWidget *parent, Qt::WindowFlags flags,
-                  const DrawingArea &a);
+    DrawingWindow(DrawingArea &a);
+    DrawingWindow(QWidget *parent, DrawingArea &a);
+    DrawingWindow(QWidget *parent, Qt::WindowFlags flags, DrawingArea &a);
 
 protected:
-    void paintEvent(QPaintEvent *e);
+    void paintEvent(QPaintEvent *ev);
+    void timerEvent(QTimerEvent *ev);
 
 private:
-    const DrawingArea &drawingArea;
+    DrawingArea &drawingArea;
+    QPixmap pixmap;
+    QBasicTimer timer;
 
     void initialize();
 };
