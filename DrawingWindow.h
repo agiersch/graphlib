@@ -14,7 +14,7 @@ class DrawingWindow: public QWidget {
 /*     Q_OBJECT */
 
 public:
-    typedef int (*ThreadFunction)(DrawingWindow &);
+    typedef void (*ThreadFunction)(DrawingWindow &);
 
     static const int DEFAULT_WIDTH = 640;
     static const int DEFAULT_HEIGHT = 480;
@@ -60,6 +60,7 @@ private:
     bool dirtyFlag;
     QRect dirtyRect;
 
+    bool mutex_enabled;
     QMutex mutex;
 
     void initialize(ThreadFunction fun, int width, int height);
@@ -88,7 +89,10 @@ int DrawingWindow::height() const
 inline
 void DrawingWindow::lock()
 {
-    mutex.lock();
+    if (mutex_enabled)
+        mutex.lock();
+    if (!mutex_enabled)
+        mutex.unlock();
 }
 
 inline

@@ -3,6 +3,8 @@
 #include <QThread>
 #include <QTimerEvent>
 
+#include <iostream>
+
 class DrawingWindow::DrawingThread: public QThread {
 public:
     DrawingThread(DrawingWindow &w, ThreadFunction f)
@@ -13,7 +15,7 @@ public:
 
     void run()
     {
-        exit(threadFunction(drawingWindow));
+        threadFunction(drawingWindow);
     }
 
 private:
@@ -59,13 +61,24 @@ void DrawingWindow::initialize(ThreadFunction fun, int width, int height)
 
     thread = new DrawingThread(*this, fun);
     thread_started = false;
+
+    mutex_enabled = true;
 }
 
 DrawingWindow::~DrawingWindow()
 {
+    mutex.lock();
+    mutex_enabled = false;
+    mutex.unlock();
+    std::cerr << "A\n";
+    thread->terminate();    
+    std::cerr << "B\n";
+    thread->wait();
+    std::cerr << "C\n";
     delete thread;
     delete painter;
     delete image;
+    std::cerr << "D\n";
 }
 
 void DrawingWindow::setColor(const QColor &color)

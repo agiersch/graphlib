@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-int flip(DrawingWindow &w)
+void flip(DrawingWindow &w)
 {
     std::cout << "[ " << w.width() << " x " << w.height() << " ]\n";
 
@@ -50,10 +50,9 @@ int flip(DrawingWindow &w)
 //                       << y << " (" << c << ")\n";
         }
     }
-    return 0;
 }
 
-int mandel(DrawingWindow &w)
+void mandel(DrawingWindow &w)
 {
     /* paramètres par défaut */
     int larg = w.width();
@@ -116,10 +115,9 @@ int mandel(DrawingWindow &w)
         }
         cr += pr;
     }
-    return 0;
 }
 
-int lines(DrawingWindow &w)
+void lines(DrawingWindow &w)
 {
     int n = 100000;
     int xmax = w.width();
@@ -135,7 +133,6 @@ int lines(DrawingWindow &w)
         w.setColor(r, g, b);
         w.drawLine(x1, y1, x2, y2);
     }
-    return 0;
 }
 
 int main(int argc, char *argv[])
