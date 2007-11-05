@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 
     DrawingWindow dd(lines, w, h);
     dd.show();
-    return application.exec();
+//     return application.exec();
 
     const int nf = 1;
     const int nm = 1;

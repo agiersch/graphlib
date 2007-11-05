@@ -5,25 +5,6 @@
 
 #include <iostream>
 
-class DrawingWindow::DrawingThread: public QThread {
-public:
-    DrawingThread(DrawingWindow &w, ThreadFunction f)
-        : drawingWindow(w)
-        , threadFunction(f)
-    {
-    }
-
-    void run()
-    {
-        threadFunction(drawingWindow);
-    }
-
-private:
-    DrawingWindow &drawingWindow;
-    ThreadFunction threadFunction;
-
-};
-
 DrawingWindow::DrawingWindow(ThreadFunction fun, int width, int height)
     : QWidget()
 {
@@ -61,24 +42,13 @@ void DrawingWindow::initialize(ThreadFunction fun, int width, int height)
 
     thread = new DrawingThread(*this, fun);
     thread_started = false;
-
-    mutex_enabled = true;
 }
 
 DrawingWindow::~DrawingWindow()
 {
-    mutex.lock();
-    mutex_enabled = false;
-    mutex.unlock();
-    std::cerr << "A\n";
-    thread->terminate();    
-    std::cerr << "B\n";
-    thread->wait();
-    std::cerr << "C\n";
     delete thread;
     delete painter;
     delete image;
-    std::cerr << "D\n";
 }
 
 void DrawingWindow::setColor(const QColor &color)
@@ -109,6 +79,21 @@ void DrawingWindow::drawLine(int x1, int y1, int x2, int y2)
     painter->drawLine(x1, y1, x2, y2);
     setDirtyRect(x1, y1, x2, y2);
     unlock();
+}
+
+void DrawingWindow::closeEvent(QCloseEvent *ev)
+{
+    std::cerr << "A\n";
+    lock();
+    std::cerr << "B\n";
+    thread->terminate();
+    std::cerr << "C\n";
+    QWidget::closeEvent(ev);
+    std::cerr << "D\n";
+    thread->wait();
+    std::cerr << "E\n";
+    unlock();
+    std::cerr << "F\n";
 }
 
 void DrawingWindow::paintEvent(QPaintEvent *ev)
@@ -153,4 +138,16 @@ void DrawingWindow::setDirtyRect(const QRect &rect)
         dirtyFlag = true;
         dirtyRect = rect;
     }
+}
+
+DrawingWindow::DrawingThread::DrawingThread(DrawingWindow &w,
+                                            ThreadFunction f)
+    : drawingWindow(w)
+    , threadFunction(f)
+{
+}
+
+void DrawingWindow::DrawingThread::run()
+{
+    threadFunction(drawingWindow);
 }

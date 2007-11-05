@@ -10,6 +10,8 @@
 #include <QWidget>
 #include <Qt>
 
+#include <QThread>
+
 class DrawingWindow: public QWidget {
 /*     Q_OBJECT */
 
@@ -40,12 +42,25 @@ public:
     void drawLine(int x1, int y1, int x2, int y2);
 
 protected:
+    void closeEvent(QCloseEvent *ev);
     void paintEvent(QPaintEvent *ev);
     void showEvent(QShowEvent *ev);
     void timerEvent(QTimerEvent *ev);
 
 private:
-    class DrawingThread;
+    class DrawingThread: public QThread {
+    public:
+        DrawingThread(DrawingWindow &w, ThreadFunction f);
+        void run();
+
+        void enableTerminate();
+        void disableTerminate();
+
+    private:
+        DrawingWindow &drawingWindow;
+        ThreadFunction threadFunction;
+        
+    };
 
     static const int paintInterval = 33;
 
@@ -60,7 +75,6 @@ private:
     bool dirtyFlag;
     QRect dirtyRect;
 
-    bool mutex_enabled;
     QMutex mutex;
 
     void initialize(ThreadFunction fun, int width, int height);
@@ -89,16 +103,15 @@ int DrawingWindow::height() const
 inline
 void DrawingWindow::lock()
 {
-    if (mutex_enabled)
-        mutex.lock();
-    if (!mutex_enabled)
-        mutex.unlock();
+    thread->disableTerminate();
+    mutex.lock();
 }
 
 inline
 void DrawingWindow::unlock()
 {
     mutex.unlock();
+    thread->enableTerminate();
 }
 
 inline
@@ -120,6 +133,20 @@ void DrawingWindow::setDirtyRect(int x1, int y1, int x2, int y2)
     QRect r;
     r.setCoords(x1, y1, x2, y2);
     setDirtyRect(r.normalized());
+}
+
+inline
+void DrawingWindow::DrawingThread::enableTerminate()
+{
+    if (currentThread() == this)
+        setTerminationEnabled(true);
+}
+
+inline
+void DrawingWindow::DrawingThread::disableTerminate()
+{
+    if (currentThread() == this)
+        setTerminationEnabled(false);
 }
 
 #endif // !DRAWING_WINDOW_H
