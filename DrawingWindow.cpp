@@ -49,12 +49,6 @@ void DrawingWindow::initialize(ThreadFunction fun, int width, int height)
 
     painter = new QPainter(image);
 
-#ifdef USE_PIXMAP_CACHE
-    pixmap = new QPixmap(image->size());
-    QPainter pixmapPainter(pixmap);
-    pixmapPainter.drawImage(0, 0, *image);
-#endif
-
     dirtyFlag = false;
 
     setFocusPolicy(Qt::StrongFocus);
@@ -70,9 +64,6 @@ void DrawingWindow::initialize(ThreadFunction fun, int width, int height)
 DrawingWindow::~DrawingWindow()
 {
     delete thread;
-#ifdef USE_PIXMAP_CACHE
-    delete pixmap;
-#endif
     delete painter;
     delete image;
 }
@@ -111,13 +102,10 @@ void DrawingWindow::paintEvent(QPaintEvent *ev)
 {
     QPainter widgetPainter(this);
     QRect rect = ev->rect();
-#ifdef USE_PIXMAP_CACHE
-    widgetPainter.drawPixmap(rect, *pixmap, rect);
-#else
     lock();
-    widgetPainter.drawImage(rect, *image, rect);
+    QImage imageCopy(*image);
     unlock();
-#endif
+    widgetPainter.drawImage(rect, imageCopy, rect);
 }
 
 void DrawingWindow::showEvent(QShowEvent *ev)
@@ -134,35 +122,14 @@ void DrawingWindow::timerEvent(QTimerEvent *ev)
     if (ev->timerId() == timer.timerId()) {
         lock();
         if (dirtyFlag) {
-#ifdef USE_PIXMAP_CACHE
-            QPainter pixmapPainter(pixmap);
-            pixmapPainter.drawImage(dirtyRect, *image, dirtyRect);
-#endif
-            dirtyFlag = false;
             update(dirtyRect);
-            timer.start(paintInterval, this);
+            dirtyFlag = false;
         }
         unlock();
+        timer.start(paintInterval, this);
     } else {
         QWidget::timerEvent(ev);
     }
-}
-
-void DrawingWindow::setDirtyRect()
-{
-    setDirtyRect(QRect(0, 0, width(), height()));
-}
-
-void DrawingWindow::setDirtyRect(int x, int y)
-{
-    setDirtyRect(QRect(x, y, 1, 1));
-}
-
-void DrawingWindow::setDirtyRect(int x1, int y1, int x2, int y2)
-{
-    QRect r;
-    r.setCoords(x1, y1, x2, y2);
-    setDirtyRect(r.normalized());
 }
 
 void DrawingWindow::setDirtyRect(const QRect &rect)

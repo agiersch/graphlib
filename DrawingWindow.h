@@ -1,16 +1,11 @@
 #ifndef DRAWING_WINDOW_H
 #define DRAWING_WINDOW_H
 
-#define USE_PIXMAP_CACHE
-
 #include <QBasicTimer>
 #include <QColor>
 #include <QImage>
 #include <QMutex>
 #include <QPainter>
-#ifdef USE_PIXMAP_CACHE
-#  include <QPixmap>
-#endif
 #include <QRect>
 #include <QWidget>
 #include <Qt>
@@ -58,9 +53,6 @@ private:
 
     QImage *image;
     QPainter *painter;
-#ifdef USE_PIXMAP_CACHE
-    QPixmap *pixmap;
-#endif
 
     DrawingThread *thread;
     bool thread_started;
@@ -103,6 +95,27 @@ inline
 void DrawingWindow::unlock()
 {
     mutex.unlock();
+}
+
+inline
+void DrawingWindow::setDirtyRect()
+{
+    dirtyFlag = true;
+    dirtyRect.setRect(0, 0, width(), height());
+}
+
+inline
+void DrawingWindow::setDirtyRect(int x, int y)
+{
+    setDirtyRect(QRect(x, y, 1, 1));
+}
+
+inline
+void DrawingWindow::setDirtyRect(int x1, int y1, int x2, int y2)
+{
+    QRect r;
+    r.setCoords(x1, y1, x2, y2);
+    setDirtyRect(r.normalized());
 }
 
 #endif // !DRAWING_WINDOW_H

@@ -119,13 +119,37 @@ int mandel(DrawingWindow &w)
     return 0;
 }
 
+int lines(DrawingWindow &w)
+{
+    int n = 100000;
+    int xmax = w.width();
+    int ymax = w.height();
+    while (n-- > 0) {
+        double r = rand() / (float )RAND_MAX;
+        double g = rand() / (float )RAND_MAX;
+        double b = rand() / (float )RAND_MAX;
+        int x1 = rand() % xmax;
+        int y1 = rand() % ymax;
+        int x2 = rand() % xmax;
+        int y2 = rand() % ymax;
+        w.setColor(r, g, b);
+        w.drawLine(x1, y1, x2, y2);
+    }
+    return 0;
+}
+
 int main(int argc, char *argv[])
 {
-    const int nf = 1;
-    const int nm = 1;
     const int w = 1000;
     const int h = 700;
     QApplication application(argc, argv);
+
+    DrawingWindow dd(lines, w, h);
+    dd.show();
+    return application.exec();
+
+    const int nf = 1;
+    const int nm = 1;
     DrawingWindow *dw[nf + nm];
 
     for (int i = 0; i < nf; ++i)
