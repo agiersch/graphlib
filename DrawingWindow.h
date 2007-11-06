@@ -36,6 +36,8 @@ public:
     void drawLine(int x1, int y1, int x2, int y2);
     void drawRect(int x1, int y1, int x2, int y2);
 
+    bool sync(unsigned long time = ULONG_MAX);
+
     void sleep(unsigned long secs);
     void msleep(unsigned long msecs);
     void usleep(unsigned long usecs);

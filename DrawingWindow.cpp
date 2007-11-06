@@ -1,4 +1,5 @@
 #include "DrawingWindow.h"
+#include <QApplication>
 #include <QBasicTimer>
 #include <QColor>
 #include <QImage>
@@ -8,6 +9,7 @@
 #include <QRect>
 #include <QThread>
 #include <QTimerEvent>
+#include <QWaitCondition>
 
 class DrawingThread: public QThread {
 public:
@@ -33,7 +35,11 @@ public:
     DrawingWindow * const q;
 
     QBasicTimer timer;
-    QMutex mutex;
+    QMutex imageMutex;
+    QMutex paintMutex;
+    QWaitCondition paintCondition;
+    bool painted;
+    int lockCount;
 
     QImage *image;
     QPainter *painter;
@@ -52,13 +58,13 @@ public:
 
     void initialize();
 
-    void lock();
-    void unlock();
+    void safeLock(QMutex &mutex);
+    void safeUnlock(QMutex &mutex);
 
-    void setDirtyRect();
-    void setDirtyRect(int x, int y);
-    void setDirtyRect(int x1, int y1, int x2, int y2);
-    void setDirtyRect(const QRect &rect);
+    void dirty();
+    void dirty(int x, int y);
+    void dirty(int x1, int y1, int x2, int y2);
+    void dirty(const QRect &rect);
 
 };
 
@@ -113,26 +119,26 @@ void DrawingWindow::setBgColor(float red, float green, float blue)
 
 void DrawingWindow::clearGraph()
 {
-    d->lock();
+    d->safeLock(d->imageMutex);
     d->painter->fillRect(d->image->rect(), d->bgColor);    
-    d->setDirtyRect();
-    d->unlock();
+    d->dirty();
+    d->safeUnlock(d->imageMutex);
 }
 
 void DrawingWindow::drawPoint(int x, int y)
 {
-    d->lock();
+    d->safeLock(d->imageMutex);
     d->painter->drawPoint(x, y);
-    d->setDirtyRect(x, y);
-    d->unlock();
+    d->dirty(x, y);
+    d->safeUnlock(d->imageMutex);
 }
 
 void DrawingWindow::drawLine(int x1, int y1, int x2, int y2)
 {
-    d->lock();
+    d->safeLock(d->imageMutex);
     d->painter->drawLine(x1, y1, x2, y2);
-    d->setDirtyRect(x1, y1, x2, y2);
-    d->unlock();
+    d->dirty(x1, y1, x2, y2);
+    d->safeUnlock(d->imageMutex);
 }
 
 void DrawingWindow::drawRect(int x1, int y1, int x2, int y2)
@@ -140,11 +146,28 @@ void DrawingWindow::drawRect(int x1, int y1, int x2, int y2)
     QRect r;
     r.setCoords(x1, y1, x2, y2);
     r = r.normalized();
-    d->lock();
+    d->safeLock(d->imageMutex);
     d->painter->drawRect(r);
     r.adjust(0, 0, 1, 1);
-    d->setDirtyRect(r);
-    d->unlock();
+    d->dirty(r);
+    d->safeUnlock(d->imageMutex);
+}
+
+bool DrawingWindow::sync(unsigned long time)
+{
+    bool ret;
+    d->safeLock(d->paintMutex);
+    d->safeLock(d->imageMutex);
+#if 1
+    d->dirty();                 // xxx
+#else
+    QApplication::postEvent(this, new QPaintEvent(this->rect()));
+    d->dirtyFlag = false;
+#endif
+    d->safeUnlock(d->imageMutex);
+    ret = d->paintCondition.wait(&d->paintMutex, time);
+    d->safeUnlock(d->paintMutex);
+    return ret;
 }
 
 void DrawingWindow::sleep(unsigned long secs)
@@ -166,6 +189,7 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
 {
     d->timer.stop();
     d->thread->terminate();
+    d->paintCondition.wakeAll();
     QWidget::closeEvent(ev);
     d->thread->wait();
 }
@@ -173,11 +197,16 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
 void DrawingWindow::paintEvent(QPaintEvent *ev)
 {
     QPainter widgetPainter(this);
-    QRect rect = ev->rect();
-    d->mutex.lock();
+    d->imageMutex.lock();
     QImage imageCopy(*d->image);
-    d->mutex.unlock();
+    d->imageMutex.unlock();
+    QRect rect = ev->rect();
     widgetPainter.drawImage(rect, imageCopy, rect);
+    if (rect == this->rect()) {
+        d->paintMutex.lock();
+        d->paintCondition.wakeAll();
+        d->paintMutex.unlock();
+    }
 }
 
 void DrawingWindow::showEvent(QShowEvent *ev)
@@ -190,12 +219,12 @@ void DrawingWindow::showEvent(QShowEvent *ev)
 void DrawingWindow::timerEvent(QTimerEvent *ev)
 {
     if (ev->timerId() == d->timer.timerId()) {
-        d->mutex.lock();
+        d->imageMutex.lock();
         if (d->dirtyFlag) {
             update(d->dirtyRect);
             d->dirtyFlag = false;
         }
-        d->mutex.unlock();
+        d->imageMutex.unlock();
         d->timer.start(d->paintInterval, this);
     } else {
         QWidget::timerEvent(ev);
@@ -207,6 +236,7 @@ void DrawingWindow::timerEvent(QTimerEvent *ev)
 DrawingWindowPrivate::DrawingWindowPrivate(DrawingWindow *w,
                                            DrawingWindow::ThreadFunction f)
     : q(w)
+    , lockCount(0)
     , image(new QImage(q->width, q->height, QImage::Format_RGB32))
     , painter(new QPainter(image))
     , thread(new DrawingThread(*q, f))
@@ -220,8 +250,8 @@ void DrawingWindowPrivate::initialize()
     q->setAttribute(Qt::WA_OpaquePaintEvent);
     q->setFocus();
 
-    q->setColor(0.0, 0.0, 0.0);
-    q->setBgColor(1.0, 1.0, 1.0);
+    q->setColor(0.0, 0.0, 0.0); // black
+    q->setBgColor(1.0, 1.0, 1.0); // white
     q->clearGraph();
 
     dirtyFlag = false;
@@ -235,41 +265,43 @@ DrawingWindowPrivate::~DrawingWindowPrivate()
 }
 
 inline
-void DrawingWindowPrivate::lock()
+void DrawingWindowPrivate::safeLock(QMutex &mutex)
 {
-    thread->setTerminationEnabled(false);
+    if (lockCount++ == 0)
+        thread->setTerminationEnabled(false);
     mutex.lock();
 }
 
 inline
-void DrawingWindowPrivate::unlock()
+void DrawingWindowPrivate::safeUnlock(QMutex &mutex)
 {
     mutex.unlock();
-    thread->setTerminationEnabled(true);
+    if (--lockCount == 0)
+        thread->setTerminationEnabled(true);
 }
 
 inline
-void DrawingWindowPrivate::setDirtyRect()
+void DrawingWindowPrivate::dirty()
 {
     dirtyFlag = true;
     dirtyRect = image->rect();
 }
 
 inline
-void DrawingWindowPrivate::setDirtyRect(int x, int y)
+void DrawingWindowPrivate::dirty(int x, int y)
 {
-    setDirtyRect(QRect(x, y, 1, 1));
+    dirty(QRect(x, y, 1, 1));
 }
 
 inline
-void DrawingWindowPrivate::setDirtyRect(int x1, int y1, int x2, int y2)
+void DrawingWindowPrivate::dirty(int x1, int y1, int x2, int y2)
 {
     QRect r;
     r.setCoords(x1, y1, x2, y2);
-    setDirtyRect(r.normalized());
+    dirty(r.normalized());
 }
 
-void DrawingWindowPrivate::setDirtyRect(const QRect &rect)
+void DrawingWindowPrivate::dirty(const QRect &rect)
 {
     if (dirtyFlag) {
         dirtyRect |= rect;

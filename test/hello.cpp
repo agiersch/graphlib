@@ -39,9 +39,10 @@ void flip(DrawingWindow &w)
 //         std::cerr << "loooooooooooooooooooooop "
 //                   << y << " (" << c << ")\n";
         w.setColor(c, c, c);
-        for (int yy = y; yy < y + 10; yy++)
+        for (int yy = y; yy < y + 10; yy++) {
             for (int x = 0; x < w.width; x++)
                 w.drawPoint(x, yy);
+        }
         if ((y += 10) >= w.height) {
             y = 0;
             c = !c;
@@ -132,6 +133,7 @@ void lines(DrawingWindow &w)
         int y2 = rand() % ymax;
         w.setColor(r, g, b);
         w.drawLine(x1, y1, x2, y2);
+        w.sync();
     }
 }
 
