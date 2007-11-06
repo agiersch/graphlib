@@ -28,21 +28,21 @@
 
 void flip(DrawingWindow &w)
 {
-    std::cout << "[ " << w.width() << " x " << w.height() << " ]\n";
+    std::cout << "[ " << w.width << " x " << w.height << " ]\n";
 
     int c = 0;
     int y = 0;
-//     int h = w.height();
-//     int w = w.width();
+//     int h = w.height;
+//     int w = w.width;
     int count = 50;//1 << 31;
     while (1) {
 //         std::cerr << "loooooooooooooooooooooop "
 //                   << y << " (" << c << ")\n";
         w.setColor(c, c, c);
         for (int yy = y; yy < y + 10; yy++)
-            for (int x = 0; x < w.width(); x++)
+            for (int x = 0; x < w.width; x++)
                 w.drawPoint(x, yy);
-        if ((y += 10) >= w.height()) {
+        if ((y += 10) >= w.height) {
             y = 0;
             c = !c;
             if (!--count) break;
@@ -55,8 +55,8 @@ void flip(DrawingWindow &w)
 void mandel(DrawingWindow &w)
 {
     /* paramètres par défaut */
-    int larg = w.width();
-    int haut = w.height();
+    int larg = w.width;
+    int haut = w.height;
     float Rmin = -2.05;
     float Rmax = 0.55;
     float Imin = -1.3;
@@ -120,8 +120,8 @@ void mandel(DrawingWindow &w)
 void lines(DrawingWindow &w)
 {
     int n = 100000;
-    int xmax = w.width();
-    int ymax = w.height();
+    int xmax = w.width;
+    int ymax = w.height;
     while (n-- > 0) {
         double r = rand() / (float )RAND_MAX;
         double g = rand() / (float )RAND_MAX;
@@ -135,15 +135,28 @@ void lines(DrawingWindow &w)
     }
 }
 
+void rectangles(DrawingWindow &w)
+{
+    int d = 5;
+    int z = (w.width > w.height ? w.height : w.width) / 2;
+    z = d * (z / d);
+    while (z > 0) {
+        w.drawRect(z, z, w.width - 1 - z, w.height - 1 - z);
+        z -= d;
+    }
+}
+
 int main(int argc, char *argv[])
 {
     const int w = 1000;
     const int h = 700;
     QApplication application(argc, argv);
 
-    DrawingWindow dd(lines, w, h);
-    dd.show();
-//     return application.exec();
+    DrawingWindow dl(lines, w, h);
+    dl.show();
+
+    DrawingWindow dr(rectangles, w, h);
+    dr.show();
 
     const int nf = 1;
     const int nm = 1;

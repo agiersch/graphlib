@@ -1,7 +1,6 @@
 #ifndef DRAWING_WINDOW_H
 #define DRAWING_WINDOW_H
 
-#include <QThread>
 #include <QWidget>
 #include <Qt>
 
