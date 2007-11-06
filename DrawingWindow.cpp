@@ -5,6 +5,12 @@
 
 #include <iostream>
 
+/*
+  TODO :
+   class DrawingWindowPrivate { ... }
+   externalize class DrawingThread
+*/
+
 DrawingWindow::DrawingWindow(ThreadFunction fun, int width, int height)
     : QWidget()
 {
@@ -83,26 +89,18 @@ void DrawingWindow::drawLine(int x1, int y1, int x2, int y2)
 
 void DrawingWindow::closeEvent(QCloseEvent *ev)
 {
-    std::cerr << "A\n";
-    lock();
-    std::cerr << "B\n";
     thread->terminate();
-    std::cerr << "C\n";
     QWidget::closeEvent(ev);
-    std::cerr << "D\n";
     thread->wait();
-    std::cerr << "E\n";
-    unlock();
-    std::cerr << "F\n";
 }
 
 void DrawingWindow::paintEvent(QPaintEvent *ev)
 {
     QPainter widgetPainter(this);
     QRect rect = ev->rect();
-    lock();
+    mutex.lock();
     QImage imageCopy(*image);
-    unlock();
+    mutex.unlock();
     widgetPainter.drawImage(rect, imageCopy, rect);
 }
 
@@ -118,12 +116,12 @@ void DrawingWindow::showEvent(QShowEvent *ev)
 void DrawingWindow::timerEvent(QTimerEvent *ev)
 {
     if (ev->timerId() == timer.timerId()) {
-        lock();
+        mutex.lock();
         if (dirtyFlag) {
             update(dirtyRect);
             dirtyFlag = false;
         }
-        unlock();
+        mutex.unlock();
         timer.start(paintInterval, this);
     } else {
         QWidget::timerEvent(ev);

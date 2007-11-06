@@ -138,15 +138,13 @@ void DrawingWindow::setDirtyRect(int x1, int y1, int x2, int y2)
 inline
 void DrawingWindow::DrawingThread::enableTerminate()
 {
-    if (currentThread() == this)
-        setTerminationEnabled(true);
+    setTerminationEnabled(true);
 }
 
 inline
 void DrawingWindow::DrawingThread::disableTerminate()
 {
-    if (currentThread() == this)
-        setTerminationEnabled(false);
+    setTerminationEnabled(false);
 }
 
 #endif // !DRAWING_WINDOW_H
