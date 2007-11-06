@@ -157,14 +157,7 @@ bool DrawingWindow::sync(unsigned long time)
 {
     bool ret;
     d->safeLock(d->paintMutex);
-    d->safeLock(d->imageMutex);
-#if 1
-    d->dirty();                 // xxx
-#else
-    QApplication::postEvent(this, new QPaintEvent(this->rect()));
-    d->dirtyFlag = false;
-#endif
-    d->safeUnlock(d->imageMutex);
+    QApplication::postEvent(this, new QEvent(QEvent::User));
     ret = d->paintCondition.wait(&d->paintMutex, time);
     d->safeUnlock(d->paintMutex);
     return ret;
@@ -194,6 +187,36 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
     d->thread->wait();
 }
 
+void DrawingWindow::customEvent(QEvent *)
+{
+    d->imageMutex.lock();
+    if (d->dirtyFlag) {
+        QRect r = d->dirtyRect;
+        d->dirtyFlag = false;
+        d->imageMutex.unlock();
+        repaint(r);
+    } else
+        d->imageMutex.unlock();
+    d->paintMutex.lock();
+    d->paintCondition.wakeAll();
+    d->paintMutex.unlock();
+}
+
+void DrawingWindow::keyPressEvent(QKeyEvent *ev)
+{
+    bool accept = true;
+    switch (ev->key()) {
+    case Qt::Key_Escape:
+        close();
+        break;
+    default:
+        accept = false;
+        break;
+    }
+    if (accept)
+        ev->accept();
+}
+
 void DrawingWindow::paintEvent(QPaintEvent *ev)
 {
     QPainter widgetPainter(this);
@@ -202,11 +225,6 @@ void DrawingWindow::paintEvent(QPaintEvent *ev)
     d->imageMutex.unlock();
     QRect rect = ev->rect();
     widgetPainter.drawImage(rect, imageCopy, rect);
-    if (rect == this->rect()) {
-        d->paintMutex.lock();
-        d->paintCondition.wakeAll();
-        d->paintMutex.unlock();
-    }
 }
 
 void DrawingWindow::showEvent(QShowEvent *ev)

@@ -42,6 +42,7 @@ void flip(DrawingWindow &w)
         for (int yy = y; yy < y + 10; yy++) {
             for (int x = 0; x < w.width; x++)
                 w.drawPoint(x, yy);
+            w.sync();
         }
         if ((y += 10) >= w.height) {
             y = 0;
@@ -115,6 +116,7 @@ void mandel(DrawingWindow &w)
             ci += pi;
         }
         cr += pr;
+//         w.sync();
     }
 }
 
@@ -154,12 +156,6 @@ int main(int argc, char *argv[])
     const int h = 700;
     QApplication application(argc, argv);
 
-    DrawingWindow dl(lines, w, h);
-    dl.show();
-
-    DrawingWindow dr(rectangles, w, h);
-    dr.show();
-
     const int nf = 1;
     const int nm = 1;
     DrawingWindow *dw[nf + nm];
@@ -171,6 +167,12 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < nf + nm; ++i)
         dw[i]->show();
+
+    DrawingWindow dr(rectangles, w, h);
+    dr.show();
+
+    DrawingWindow dl(lines, w, h);
+    dl.show();
 
     return application.exec();
 }

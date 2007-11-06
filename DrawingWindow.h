@@ -44,6 +44,8 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *ev);
+    void customEvent(QEvent *ev);
+    void keyPressEvent(QKeyEvent *ev);
     void paintEvent(QPaintEvent *ev);
     void showEvent(QShowEvent *ev);
     void timerEvent(QTimerEvent *ev);
