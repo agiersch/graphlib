@@ -152,7 +152,7 @@ void rectangles(DrawingWindow &w)
 
 int main(int argc, char *argv[])
 {
-    const int w = 1000;
+    const int w = 700;
     const int h = 700;
     QApplication application(argc, argv);
 

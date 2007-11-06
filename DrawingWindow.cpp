@@ -189,6 +189,7 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
 
 void DrawingWindow::customEvent(QEvent *)
 {
+    d->paintMutex.lock();
     d->imageMutex.lock();
     if (d->dirtyFlag) {
         QRect r = d->dirtyRect;
@@ -197,7 +198,6 @@ void DrawingWindow::customEvent(QEvent *)
         repaint(r);
     } else
         d->imageMutex.unlock();
-    d->paintMutex.lock();
     d->paintCondition.wakeAll();
     d->paintMutex.unlock();
 }
