@@ -32,24 +32,18 @@ void flip(DrawingWindow &w)
 
     int c = 0;
     int y = 0;
-//     int h = w.height;
-//     int w = w.width;
     int count = 50;//1 << 31;
     while (1) {
-//         std::cerr << "loooooooooooooooooooooop "
-//                   << y << " (" << c << ")\n";
         w.setColor(c, c, c);
         for (int yy = y; yy < y + 10; yy++) {
             for (int x = 0; x < w.width; x++)
                 w.drawPoint(x, yy);
-            w.sync();
         }
         if ((y += 10) >= w.height) {
+            w.sync();
             y = 0;
             c = !c;
             if (!--count) break;
-//             std::cerr << "loooooooooooooooooooooop "
-//                       << y << " (" << c << ")\n";
         }
     }
 }
@@ -116,7 +110,8 @@ void mandel(DrawingWindow &w)
             ci += pi;
         }
         cr += pr;
-//         w.sync();
+//         if (x % 10 == 0)
+//             w.sync();
     }
 }
 
@@ -135,7 +130,8 @@ void lines(DrawingWindow &w)
         int y2 = rand() % ymax;
         w.setColor(r, g, b);
         w.drawLine(x1, y1, x2, y2);
-        w.sync();
+        if (n % 100 == 0)
+            w.sync();
     }
 }
 

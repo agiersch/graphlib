@@ -36,8 +36,8 @@ public:
 
     QBasicTimer timer;
     QMutex imageMutex;
-    QMutex paintMutex;
-    QWaitCondition paintCondition;
+    QMutex syncMutex;
+    QWaitCondition syncCondition;
     bool painted;
     int lockCount;
 
@@ -66,6 +66,7 @@ public:
     void dirty(int x1, int y1, int x2, int y2);
     void dirty(const QRect &rect);
 
+    void update();
 };
 
 //--- DrawingWindow ----------------------------------------------------
@@ -155,12 +156,11 @@ void DrawingWindow::drawRect(int x1, int y1, int x2, int y2)
 
 bool DrawingWindow::sync(unsigned long time)
 {
-    bool ret;
-    d->safeLock(d->paintMutex);
-    QApplication::postEvent(this, new QEvent(QEvent::User));
-    ret = d->paintCondition.wait(&d->paintMutex, time);
-    d->safeUnlock(d->paintMutex);
-    return ret;
+    d->safeLock(d->syncMutex);
+    qApp->postEvent(this, new QEvent(QEvent::User));
+    bool synced = d->syncCondition.wait(&d->syncMutex, time);
+    d->safeUnlock(d->syncMutex);
+    return synced;
 }
 
 void DrawingWindow::sleep(unsigned long secs)
@@ -182,24 +182,32 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
 {
     d->timer.stop();
     d->thread->terminate();
-    d->paintCondition.wakeAll();
+    d->syncMutex.lock();
+    d->syncCondition.wakeAll();
+    d->syncMutex.unlock();
     QWidget::closeEvent(ev);
     d->thread->wait();
 }
 
 void DrawingWindow::customEvent(QEvent *)
 {
-    d->paintMutex.lock();
-    d->imageMutex.lock();
-    if (d->dirtyFlag) {
-        QRect r = d->dirtyRect;
-        d->dirtyFlag = false;
-        d->imageMutex.unlock();
-        repaint(r);
-    } else
-        d->imageMutex.unlock();
-    d->paintCondition.wakeAll();
-    d->paintMutex.unlock();
+    d->syncMutex.lock();
+    d->update();
+    qApp->sendPostedEvents(this, QEvent::UpdateLater);
+    qApp->sendPostedEvents(this, QEvent::UpdateRequest);
+    qApp->sendPostedEvents(this, QEvent::Paint);
+    if (0) {                    // Disabled because this can lead to
+                                // dead-lock if a close event is
+                                // processed !
+        qApp->processEvents(QEventLoop::ExcludeUserInputEvents |
+                            QEventLoop::ExcludeSocketNotifiers |
+                            QEventLoop::DeferredDeletion |
+                            QEventLoop::X11ExcludeTimers);
+    }
+    qApp->flush();
+    qApp->syncX();
+    d->syncCondition.wakeAll();
+    d->syncMutex.unlock();
 }
 
 void DrawingWindow::keyPressEvent(QKeyEvent *ev)
@@ -237,12 +245,7 @@ void DrawingWindow::showEvent(QShowEvent *ev)
 void DrawingWindow::timerEvent(QTimerEvent *ev)
 {
     if (ev->timerId() == d->timer.timerId()) {
-        d->imageMutex.lock();
-        if (d->dirtyFlag) {
-            update(d->dirtyRect);
-            d->dirtyFlag = false;
-        }
-        d->imageMutex.unlock();
+        d->update();
         d->timer.start(d->paintInterval, this);
     } else {
         QWidget::timerEvent(ev);
@@ -327,6 +330,17 @@ void DrawingWindowPrivate::dirty(const QRect &rect)
         dirtyFlag = true;
         dirtyRect = rect;
     }
+}
+
+void DrawingWindowPrivate::update()
+{
+    imageMutex.lock();
+    bool dirty = dirtyFlag;
+    QRect rect = dirtyRect;
+    dirtyFlag = false;
+    imageMutex.unlock();
+    if (dirty)
+        q->update(rect);
 }
 
 //--- DrawingThread ----------------------------------------------------
