@@ -130,7 +130,7 @@ void lines(DrawingWindow &w)
         int y2 = rand() % ymax;
         w.setColor(r, g, b);
         w.drawLine(x1, y1, x2, y2);
-        if (n % 100 == 0)
+        //if (n % 100 == 0)
             w.sync();
     }
 }

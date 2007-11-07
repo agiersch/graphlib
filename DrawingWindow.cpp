@@ -38,7 +38,7 @@ public:
     QMutex imageMutex;
     QMutex syncMutex;
     QWaitCondition syncCondition;
-    bool painted;
+    bool terminateThread;
     int lockCount;
 
     QImage *image;
@@ -156,9 +156,14 @@ void DrawingWindow::drawRect(int x1, int y1, int x2, int y2)
 
 bool DrawingWindow::sync(unsigned long time)
 {
+    bool synced;
     d->safeLock(d->syncMutex);
-    qApp->postEvent(this, new QEvent(QEvent::User));
-    bool synced = d->syncCondition.wait(&d->syncMutex, time);
+    if (d->terminateThread) {
+        synced = false;
+    } else {
+        qApp->postEvent(this, new QEvent(QEvent::User));
+        synced = d->syncCondition.wait(&d->syncMutex, time);
+    }
     d->safeUnlock(d->syncMutex);
     return synced;
 }
@@ -183,6 +188,12 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
     d->timer.stop();
     d->thread->terminate();
     d->syncMutex.lock();
+    d->terminateThread = true;  // this flag is needed for the case
+                                // where the following wakeAll() call
+                                // occurs between the
+                                // setTerminationEnable(false) and the
+                                // mutex lock in safeLock() called
+                                // from sync()
     d->syncCondition.wakeAll();
     d->syncMutex.unlock();
     QWidget::closeEvent(ev);
@@ -191,21 +202,17 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
 
 void DrawingWindow::customEvent(QEvent *)
 {
-    d->syncMutex.lock();
     d->update();
     qApp->sendPostedEvents(this, QEvent::UpdateLater);
     qApp->sendPostedEvents(this, QEvent::UpdateRequest);
     qApp->sendPostedEvents(this, QEvent::Paint);
-    if (0) {                    // Disabled because this can lead to
-                                // dead-lock if a close event is
-                                // processed !
-        qApp->processEvents(QEventLoop::ExcludeUserInputEvents |
-                            QEventLoop::ExcludeSocketNotifiers |
-                            QEventLoop::DeferredDeletion |
-                            QEventLoop::X11ExcludeTimers);
-    }
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents |
+                        QEventLoop::ExcludeSocketNotifiers |
+                        QEventLoop::DeferredDeletion |
+                        QEventLoop::X11ExcludeTimers);
     qApp->flush();
     qApp->syncX();
+    d->syncMutex.lock();
     d->syncCondition.wakeAll();
     d->syncMutex.unlock();
 }
@@ -257,6 +264,7 @@ void DrawingWindow::timerEvent(QTimerEvent *ev)
 DrawingWindowPrivate::DrawingWindowPrivate(DrawingWindow *w,
                                            DrawingWindow::ThreadFunction f)
     : q(w)
+    , terminateThread(false)
     , lockCount(0)
     , image(new QImage(q->width, q->height, QImage::Format_RGB32))
     , painter(new QPainter(image))
