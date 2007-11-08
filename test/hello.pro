@@ -1,16 +1,17 @@
 TEMPLATE = app
 TARGET = hello
 
-CONFIG += qt debug
+CONFIG += qt
+CONFIG += debug
+#CONFIG += profile
 
-QMAKE_CFLAGS += -O2
-QMAKE_CXXFLAGS += -O2
+profile {
+	QMAKE_CFLAGS += -pg
+	QMAKE_CXXFLAGS += -pg
+	QMAKE_LFLAGS += -pg
+}
 
-#QMAKE_CFLAGS += -pg
-#QMAKE_CXXFLAGS += -pg
-#QMAKE_LFLAGS += -pg
-
+INCLUDEPATH += ../
 HEADERS += ../DrawingWindow.h
-
 SOURCES += ../DrawingWindow.cpp \
-           hello.cc
+           hello.cpp
