@@ -307,7 +307,7 @@ inline
 void DrawingWindow::dirty(int x1, int y1, int x2, int y2)
 {
     QRect r;
-    r.setCoords(x1, y1, x2, y2); // xy2 + 1 ???
+    r.setCoords(x1, y1, x2, y2);
     dirty(r.normalized());
 }
 
