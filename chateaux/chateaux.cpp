@@ -11,6 +11,30 @@
 
 const float PI = 4.0 * atan(1.0);
 
+const float rXMin = -100.0;
+const float rXMax = 100.0;
+const float rYMin = -10.0;
+const float rYMax = 140.0;
+
+const float hauteurMin = 10;
+const float hauteurMax = 130;
+const float largeurMin = 40;
+const float largeurMax = 150;
+
+const float largeurChateau = 8.5;
+const float hauteurChateau = 7;
+
+const float positionChateau1 = -85.0;
+const float positionChateau2 = 85.0;
+
+const float g = 9.81;
+const float k = 0.005;
+const float dt = 0.05;
+
+float largeurMont;
+float hauteurMont;
+float wnd;
+
 /* Retourne un nombre pseudo-aléatoire compris entre 0 et le paramètre
  * 'max' (exclus)
  */
@@ -28,30 +52,6 @@ float deg2rad(float deg)
 {
     return deg * PI / 180.0;
 }
-
-const float rXMin = -100.0;
-const float rXMax = 100.0;
-const float rYMin = -10.0;
-const float rYMax = 140.0;
-
-const float hauteurMin = 10;
-const float hauteurMax = 130;
-const float largeurMin = 40;
-const float largeurMax = 150;
-
-const float largeurMont = frand(largeurMin, largeurMax);
-const float hauteurMont = frand(hauteurMin, hauteurMax);
-
-const float largeurChateau = 8.5;
-const float hauteurChateau = 7;
-
-const float positionChateau1 = -85.0;
-const float positionChateau2 = 85.0;
-
-const float g = 9.81;
-const float k = 0.005;
-const float dt = 0.05;
-const float wnd = frand(-30, 30);
 
 // conversion coordonnées réelles -> coordonnées fenêtre
 int rtowX(const DrawingWindow& w, float rx)
@@ -193,6 +193,18 @@ void dessineFlammes(DrawingWindow& w, float x0, float y0)
     }
 }
 
+void initialise(DrawingWindow& w)
+{
+    largeurMont = frand(largeurMin, largeurMax);
+    hauteurMont = frand(hauteurMin, hauteurMax);
+    wnd = frand(-30, 30);
+    w.clearGraph();
+    dessineTerrain(w, largeurMont, hauteurMont);
+    dessineChateau(w, positionChateau1);
+    dessineChateau(w, positionChateau2);
+    dessineVent(w, wnd);
+}
+
 /* Retour : numéro du perdant, 0 sinon
    x et y contiennent les coordonnées de la collision
 */
@@ -244,13 +256,9 @@ int tir(DrawingWindow& w,
     return collision == 3 ? 0 : collision;
 }
 
-void jeu(DrawingWindow& w)
+void jeu1(DrawingWindow& w)
 {
-    dessineTerrain(w, largeurMont, hauteurMont);
-    dessineChateau(w, positionChateau1);
-    dessineChateau(w, positionChateau2);
-    dessineVent(w, wnd);
-
+    initialise(w);
     int joueur = 2;
     float x, y;
     int perdant;
@@ -269,6 +277,7 @@ void jeu(DrawingWindow& w)
         }
         perdant = tir(w, x0, y0, v0, alpha, x, y);
         dessineExplosion(w, x, y);
+        dessineVent(w, wnd);
     } while (!perdant);
     dessineFlammes(w, x, y);
     std::cout << "Joueur " << perdant;
@@ -277,6 +286,14 @@ void jeu(DrawingWindow& w)
     else
         std::cout << " a perdu";
     std::cout << " !\n";
+}
+
+void jeu(DrawingWindow& w)
+{
+    while (1) {
+        jeu1(w);
+        w.sleep(5);
+    }
 }
 
 int main(int argc, char *argv[])
