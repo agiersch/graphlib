@@ -271,6 +271,12 @@ void jeu(DrawingWindow& w)
         dessineExplosion(w, x, y);
     } while (!perdant);
     dessineFlammes(w, x, y);
+    std::cout << "Joueur " << perdant;
+    if (perdant == joueur)
+        std::cout << " s'est suicidé";
+    else
+        std::cout << " a perdu";
+    std::cout << " !\n";
 }
 
 int main(int argc, char *argv[])
