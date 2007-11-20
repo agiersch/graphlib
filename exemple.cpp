@@ -1,25 +1,31 @@
 /*
- * Pour compiler
- * =============
+ * Pour compiler et exécuter
+ * =========================
  *
- * 1. Créer le fichier hello.pro :
+ * 1. Créer le fichier exemple.pro :
  *      +------------------------------------------------------------+
+ *      |TEMPLATE = app                                              |
  *      |TARGET = hello                                              |
- *      |CONFIG += qt debug                                          |
- *      |SOURCES += hello.cc                                         |
+ *      |CONFIG += qt                                                |
+ *      |CONFIG += debug                                             |
+ *      |HEADERS += DrawingWindow.h                                  |
+ *      |SOURCES += DrawingWindow.cpp                                |
+ *      |SOURCES += exemple.cc                                       |
  *      +------------------------------------------------------------+
  *
  * 2. Créer le fichier Makefile avec la commande :
- *      $ qmake -makefile hello.pro
+ *      $ qmake-qt4 exemple.pro
  *    ou tout simplement :
- *      $ qmake -makefile
+ *      $ qmake-qt4
  *
  * 3. Compiler avec la commande :
- *      $ make hello
+ *      $ make exemple
  *    ou tou simplement :
  *      $ make
+ *
+ * 4. Exécuter le programme avec la commande :
+ *      $ ./exemple
  */
-
 
 #include <QApplication>
 #include <DrawingWindow.h>

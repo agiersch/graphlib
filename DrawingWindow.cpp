@@ -58,6 +58,8 @@ public:
 
     void initialize();
 
+    void applyColor();
+
     void safeLock(QMutex &mutex);
     void safeUnlock(QMutex &mutex);
 
@@ -108,14 +110,23 @@ DrawingWindow::~DrawingWindow()
 void DrawingWindow::setColor(float red, float green, float blue)
 {
     d->fgColor.setRgbF(red, green, blue);
-    QPen pen(d->painter->pen());
-    pen.setColor(d->fgColor);
-    d->painter->setPen(pen);
+    d->applyColor();
+}
+
+void DrawingWindow::setColor(const char *name)
+{
+    d->fgColor.setNamedColor(name);
+    d->applyColor();
 }
 
 void DrawingWindow::setBgColor(float red, float green, float blue)
 {
     d->bgColor.setRgbF(red, green, blue);
+}
+
+void DrawingWindow::setBgColor(const char *name)
+{
+    d->bgColor.setNamedColor(name);
 }
 
 void DrawingWindow::clearGraph()
@@ -145,13 +156,38 @@ void DrawingWindow::drawLine(int x1, int y1, int x2, int y2)
 void DrawingWindow::drawRect(int x1, int y1, int x2, int y2)
 {
     QRect r;
-    r.setCoords(x1, y1, x2, y2);
+    r.setCoords(x1, y1, x2 - 1, y2 - 1);
     r = r.normalized();
     d->safeLock(d->imageMutex);
     d->painter->drawRect(r);
     r.adjust(0, 0, 1, 1);
     d->dirty(r);
     d->safeUnlock(d->imageMutex);
+}
+
+void DrawingWindow::fillRect(int x1, int y1, int x2, int y2)
+{
+    d->painter->setBrush(d->fgColor);
+    drawRect(x1, y1, x2, y2);
+    d->painter->setBrush(Qt::NoBrush);
+}
+
+void DrawingWindow::drawCircle(int x, int y, int r)
+{
+    QRect rect;
+    rect.setCoords(x - r, y - r, x + r - 1, y + r - 1);
+    d->safeLock(d->imageMutex);
+    d->painter->drawEllipse(rect);
+    rect.adjust(0, 0, 1, 1);
+    d->dirty(rect);
+    d->safeUnlock(d->imageMutex);
+}
+
+void DrawingWindow::fillCircle(int x, int y, int r)
+{
+    d->painter->setBrush(d->fgColor);
+    drawCircle(x, y, r);
+    d->painter->setBrush(Qt::NoBrush);
 }
 
 bool DrawingWindow::sync(unsigned long time)
@@ -279,8 +315,8 @@ void DrawingWindowPrivate::initialize()
     q->setAttribute(Qt::WA_OpaquePaintEvent);
     q->setFocus();
 
-    q->setColor(0.0, 0.0, 0.0); // black
-    q->setBgColor(1.0, 1.0, 1.0); // white
+    q->setColor("black");
+    q->setBgColor("white");
     q->clearGraph();
 
     dirtyFlag = false;
@@ -291,6 +327,14 @@ DrawingWindowPrivate::~DrawingWindowPrivate()
     delete thread;
     delete painter;
     delete image;
+}
+
+inline
+void DrawingWindowPrivate::applyColor()
+{
+    QPen pen(painter->pen());
+    pen.setColor(fgColor);
+    painter->setPen(pen);
 }
 
 inline

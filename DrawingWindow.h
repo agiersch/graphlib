@@ -27,14 +27,20 @@ public:
     const int width;
     const int height;
 
+    // http://www.w3.org/TR/SVG/types.html#ColorKeywords
     void setColor(float red, float green, float blue);
+    void setColor(const char *name);
     void setBgColor(float red, float green, float blue);
+    void setBgColor(const char *name);
 
     void clearGraph();
 
     void drawPoint(int x, int y);
     void drawLine(int x1, int y1, int x2, int y2);
     void drawRect(int x1, int y1, int x2, int y2);
+    void fillRect(int x1, int y1, int x2, int y2);
+    void drawCircle(int x, int y, int r);
+    void fillCircle(int x, int y, int r);
 
     bool sync(unsigned long time = ULONG_MAX);
 
