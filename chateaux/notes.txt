@@ -1,15 +1,22 @@
 Données
 -------
 
+g       constante de gravitation
+k       coefficient de frottement
+dt      intervalle de temps de la simulation
+wnd     vitesse du vent
 x0, y0  position initiale    
 v0      vitesse initiale
 alpha   angle de tir
-g       constante de gravitation
-k       coefficient de frottement
-w       vitesse du vent
 
 Variables
 ---------
+
+fx(t)   composante x de la force de frottement à l'instant t
+fy(t)   composante y de la force de frottement à l'instant t
+
+ax(t)   composante x de l'accélération à l'instant t
+ay(t)   composante y de l'accélération à l'instant t
 
 x(t)    composante x de la position à l'instant t
 y(t)    composante y de la position à l'instant t
@@ -18,20 +25,17 @@ vx(t)   composante x de la vitesse à l'instant t
 vy(t)   composante y de la vitesse à l'instant t
 
 vrx(t)  composante x de la vitesse relative à l'instant t
-        = vx(t) - w
+        = vx(t) - wnd
 vry(t)  composante y de la vitesse relative à l'instant t
         = vy(t)
 |vr(t)| vitesse relative à l'instant t
         = SQRT(vrx(t)^2 + vry(t)^2)
 
-ax(t)   composante x de l'accélération à l'instant t
-ay(t)   composante y de l'accélération à l'instant t
-
-fx(t)   composante x de la force de frottement
-fy(t)   composante y de la force de frottement
-
 Initialisation
 --------------
+
+ax(0)   = 0
+ay(0)   = 0
 
 x(0)    = x0
 y(0)    = y0
@@ -39,56 +43,55 @@ y(0)    = y0
 vx(0)   = v0 cos(alpha)
 vy(0)   = v0 sin(alpha)
 
-ax(0)   = 0
-ay(0)   = 0
-
 Mise à jour
 -----------
 
-x(t+1)  = x(t) + vx(t)
-y(t+1)  = y(t) + vy(t)
-
-vx(t+1) = vx(t) + ax(t)
-vy(t+1) = vy(t) + ay(t)
-
+|f(t)|  = -k |vr(t)| vr(t)
 fx(t)   = -k |vr(t)| vrx(t)
-        = -k |vr(t)| (vx(t) - w)
-        = -k SQRT((vx(t) - w)^2 + vy(t)^2) vx(t)
+        = -k |vr(t)| (vx(t) - wnd)
+        = -k SQRT((vx(t) - wnd)^2 + vy(t)^2) (vx(t) - wnd)
 fy(t)   = -k vr(t) vry(y)
         = -k vr(t) vy(t)
-        = -k SQRT((vx(t) - w)^2 + vy(t)^2) vy(t)
+        = -k SQRT((vx(t) - wnd)^2 + vy(t)^2) vy(t)
 
-ax(t+1) = fx(t)
-        = -k SQRT((vx(t) - w)^2 + vy(t)^2) vx(t)
-ay(t+1) = -g + fy(t)
-        = -g - k SQRT((vx(t) - w)^2 + vy(t)^2) vy(t)
+ax(t)   = fx(t)
+        = -k SQRT((vx(t) - wnd)^2 + vy(t)^2) (vx(t) - wnd)
+ay(t)   = fy(t) - g
+        = -k SQRT((vx(t) - wnd)^2 + vy(t)^2) vy(t) - g
+
+x(t+1)  = x(t) + vx(t) dt
+y(t+1)  = y(t) + vy(t) dt
+
+vx(t+1) = vx(t) + ax(t) dt
+vy(t+1) = vy(t) + ay(t) dt
 
 Algorithme
 ----------
 Données
-        ax0     ax(t)
-        ay0     ay(t)
-        vx0     vx(t)
-        vy0     vy(t)
         x0      x(t)
         y0      y(t)
+        vx0     vx(t)
+        vy0     vy(t)
 
 Résultats
-        ax1     ax(t+1)
-        ay1     ay(t+1)
-        vx1     vx(t+1)
-        vy1     vy(t+1)
         x1      x(t+1)
         y1      y(t+1)
+        vx1     vx(t+1)
+        vy1     vy(t+1)
 
 Intermédiaires
+        vxr     vx(t) - wnd     
         kvr     - k × vr(t)
+        ax      ax(t)
+        ay      ay(t)
 
 Algorithme
-        x1  <- x0 + v0
-        y1  <- y0 + v0
-        vx1 <- vx0 + ax0
-        vy1 <- vy0 + ay0
-        kvr <- k × SQRT((vx0 - w)^2 + vy0^2)
-        ax1 <- kvr × vx0
-        ay1 <- kvr × vy0 - g
+        vxr <- vx0 - wnd
+        kvr <- -k × SQRT(vxr × vxr + vy0 × vy0)
+        ax  <- kvr × vxr
+        ay  <- kvr × vy0 - g
+
+        x1  <- x0 + vx0 × dt
+        y1  <- y0 + vy0 × dt
+        vx1 <- vx0 + ax0 × dt
+        vy1 <- vy0 + ay0 × dt

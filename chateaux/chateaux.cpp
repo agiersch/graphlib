@@ -19,6 +19,9 @@ const float hauteurMax = 130;
 const float largeurMin = 40;
 const float largeurMax = 150;
 
+const float largeurChateau = 8.5;
+const float hauteurChateau = 7;
+
 const float positionChateau1 = -85.0;
 const float positionChateau2 = 85.0;
 
@@ -33,6 +36,12 @@ float frand(float min, float max)
         first = false;
     }
     return min + (max - min)* (rand() / (RAND_MAX + 1.0));
+}
+
+float deg2rad(float deg)
+{
+    const float PI = 4.0 * atan(1.0);
+    return deg * PI / 180.0;
 }
 
 // conversion coordonnées réelles -> coordonnées fenêtre
@@ -57,17 +66,21 @@ float wtorY(const DrawingWindow& w, int wy)
     return -(rYMax - rYMin + 1.0) * wy / w.height - rYMax;
 }
 
+float hauteurMontagne(float largeur, float hauteur, float x)
+{
+    float rx = 2.0 * x / largeur;
+    return hauteur * (1.0 - rx * rx);
+}
+
 void dessineTerrain(DrawingWindow& w, float largeur, float hauteur)
 {
-    float l = largeur / 2.0;
-    float h = hauteur;
     int y0 = rtowY(w, 0) + 1;
-    int xmin = rtowX(w, -l) - 1;
-    int xmax = rtowX(w, l) + 1;
+    int xmin = rtowX(w, -largeur / 2.0) - 1;
+    int xmax = rtowX(w, largeur / 2.0) + 1;
     w.setColor("forestgreen");
     for (int x = xmin; x <= xmax; x++) {
-        float rx = wtorX(w, x) / l;
-        float ry = h * (1.0 - rx * rx);
+        float rx = wtorX(w, x);
+        float ry = hauteurMontagne(largeur, hauteur, rx);
         int y = rtowY(w, ry);
         if (y <= y0)
             w.drawLine(x, y0, x, y);
@@ -103,9 +116,30 @@ void dessineChateau(DrawingWindow& w, float position)
     }
 }
 
+void dessineVent(DrawingWindow &w, float vitesse)
+{
+    int lg = rtowX(w, vitesse) - rtowX(w, 0);
+    int dir = lg > 0 ? 1 : -1;
+    int y = 20;
+    w.setColor("black");
+    if (lg == 0) {
+        w.drawCircle(w.width / 2, y, 4);
+    } else {
+        int x1 = (w.width - lg) / 2;
+        int x2 = (w.width + lg) / 2;
+        w.drawLine(x1 - dir, y - 1, x2 - dir, y - 1);
+        w.drawLine(x1, y, x2, y);
+        w.drawLine(x1 - dir, y + 1, x2 - dir, y + 1);        
+        for (int i = 0; i < 3; i++) {
+            w.drawLine(x2 - i * dir, y, x2 - (6 + i) * dir, y - 4);
+            w.drawLine(x2 - i * dir, y, x2 - (6 + i) * dir, y + 4);
+        }
+    }
+}
+
 void dessineExplosion(DrawingWindow& w, float rx, float ry)
 {
-    const int maxray = rtowX(w, 5) - rtowX(w, 0);
+    const int maxray = rtowX(w, 3) - rtowX(w, 0);
     // 1/2 rouge -> rouge -> jaune
     const int x = rtowX(w, rx);
     const int y = rtowY(w, ry);
@@ -123,21 +157,74 @@ void dessineExplosion(DrawingWindow& w, float rx, float ry)
     w.setColor("white");
     for (i = 0; i < maxray; i++) {
         w.drawCircle(x, y, i);
-        w.msleep(20);
+        w.msleep(10);
     }
     w.fillCircle(x, y, maxray - 1);
 }
 
 void jeu(DrawingWindow& w)
 {
-    dessineTerrain(w, frand(largeurMin, largeurMax),
-                   frand(hauteurMin, hauteurMax));
+    const float largeurMont = frand(largeurMin, largeurMax);
+    const float hauteurMont = frand(hauteurMin, hauteurMax);
+
+    dessineTerrain(w, largeurMont, hauteurMont);
     dessineChateau(w, positionChateau1);
     dessineChateau(w, positionChateau2);
 
-    while (1)
-        dessineExplosion(w, frand(rXMin, rXMax), frand(rYMin, rYMax));
-    
+    const float g = 9.81;
+    const float k = 0.005;
+    const float dt = 0.1;        
+    const float wnd = frand(-30, 30);
+    const float x0 = positionChateau1 + 8;
+    const float y0 = 8;
+
+    dessineVent(w, wnd);
+
+    while (1) {
+        const float v0 = frand(10, 100);
+        const float alpha = deg2rad(frand(10, 90));
+
+        float x = x0;
+        float y = y0;
+        float vx = v0 * cos(alpha);
+        float vy = v0 * sin(alpha);
+        w.setColor("black");
+        bool collision = false;
+        do {
+            int wx = rtowX(w, x);
+            int wy = rtowY(w, y);
+            w.fillCircle(wx, wy, 2);
+
+            float vxr = vx - wnd;
+            float kvr = -k * sqrt(vxr * vxr + vy * vy);
+            float ax = kvr * vxr;
+            float ay = kvr * vy - g;
+            x += vx * dt;
+            y += vy * dt;
+            vx += ax * dt;
+            vy += ay * dt;
+
+            w.msleep(10);
+            w.setColor("white");
+            w.fillCircle(wx, wy, 2);
+            w.setColor("black");
+            w.drawPoint(wx, wy);
+
+            if ((y <= 0) ||
+                (y < hauteurChateau
+                 && ((positionChateau1 - largeurChateau <= x
+                      && positionChateau1 + largeurChateau >= x) ||
+                     (positionChateau2 - largeurChateau <= x
+                      && positionChateau2 + largeurChateau >= x)))) {
+                collision = true;
+            } else {
+                float h = hauteurMontagne(largeurMont, hauteurMont, x);
+                if (h > 0 && y < h)
+                    collision = true;
+            }
+        } while (!collision);
+        dessineExplosion(w, x, y);
+    }
 }
 
 int main(int argc, char *argv[])
