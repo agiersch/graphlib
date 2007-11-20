@@ -31,6 +31,8 @@ const float g = 9.81;
 const float k = 0.005;
 const float dt = 0.05;
 
+int nbJoueurs = 2;
+
 float largeurMont;
 float hauteurMont;
 float wnd;
@@ -263,18 +265,32 @@ void jeu1(DrawingWindow& w)
     float x, y;
     int perdant;
     do {
-        float x0;
-        float y0 = 8;
-        float v0 = frand(10, 100);
-        float alpha = deg2rad(frand(10, 90));
-
         joueur = 3 - joueur;
+
+        std::cout << "-=| Joueur " << joueur << " |=-\n";
+
+        float alpha;
+        float v0;
+        if (joueur <= nbJoueurs) {
+            std::cout << "angle ? ";
+            std::cin >> alpha;
+            std::cout << "vitesse initiale ? ";
+            std::cin >> v0;
+        } else {
+            alpha = frand(10, 90);
+            v0 = frand(10, 100);
+            std::cout << "[ " << alpha << " ; " << v0 << " ]\n";
+        }
+
+        alpha = deg2rad(alpha);
+        float x0;
         if (joueur == 1) {
             x0 = positionChateau1 + 8;
         } else {
             x0 = positionChateau2 - 8;
             alpha = PI - alpha;
         }
+        float y0 = 8;
         perdant = tir(w, x0, y0, v0, alpha, x, y);
         dessineExplosion(w, x, y);
         dessineVent(w, wnd);
@@ -299,6 +315,10 @@ void jeu(DrawingWindow& w)
 int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
+
+    if (argc > 1)
+        nbJoueurs = atoi(argv[1]);
+
     DrawingWindow window(jeu, 640, 480);
     window.show();
     return application.exec();
