@@ -1,15 +1,9 @@
 #include "DrawingWindow.h"
 #include <QApplication>
-#include <QBasicTimer>
-#include <QColor>
-#include <QImage>
-#include <QMutex>
 #include <QPaintEvent>
 #include <QPainter>
-#include <QRect>
 #include <QThread>
 #include <QTimerEvent>
-#include <QWaitCondition>
 
 class DrawingThread: public QThread {
 public:
@@ -25,50 +19,6 @@ private:
     bool started_once;
 
     friend class DrawingWindow;
-    friend class DrawingWindowPrivate;
-};
-
-class DrawingWindowPrivate {
-public:
-    static const int paintInterval = 33;
-
-    DrawingWindow * const q;
-
-    QBasicTimer timer;
-    QMutex imageMutex;
-    QMutex syncMutex;
-    QWaitCondition syncCondition;
-    bool terminateThread;
-    int lockCount;
-
-    QImage *image;
-    QPainter *painter;
-
-    QColor fgColor;
-    QColor bgColor;
-
-    bool dirtyFlag;
-    QRect dirtyRect;
-
-    DrawingThread *thread;
-
-    DrawingWindowPrivate(DrawingWindow *w,
-                         DrawingWindow::ThreadFunction f);
-    ~DrawingWindowPrivate();
-
-    void initialize();
-
-    void applyColor();
-
-    void safeLock(QMutex &mutex);
-    void safeUnlock(QMutex &mutex);
-
-    void dirty();
-    void dirty(int x, int y);
-    void dirty(int x1, int y1, int x2, int y2);
-    void dirty(const QRect &rect);
-
-    void update();
 };
 
 //--- DrawingWindow ----------------------------------------------------
@@ -77,9 +27,8 @@ DrawingWindow::DrawingWindow(ThreadFunction f, int w, int h)
     : QWidget()
     , width(w)
     , height(h)
-    , d(new DrawingWindowPrivate(this, f))
 {
-    d->initialize();
+    initialize(f);
 }
 
 DrawingWindow::DrawingWindow(QWidget *parent,
@@ -87,9 +36,8 @@ DrawingWindow::DrawingWindow(QWidget *parent,
     : QWidget(parent)
     , width(w)
     , height(h)
-    , d(new DrawingWindowPrivate(this, f))
 {
-    d->initialize();
+    initialize(f);
 }
 
 DrawingWindow::DrawingWindow(QWidget *parent, Qt::WindowFlags flags,
@@ -97,60 +45,61 @@ DrawingWindow::DrawingWindow(QWidget *parent, Qt::WindowFlags flags,
     : QWidget(parent, flags)
     , width(w)
     , height(h)
-    , d(new DrawingWindowPrivate(this, f))
 {
-    d->initialize();
+    initialize(f);
 }
 
 DrawingWindow::~DrawingWindow()
 {
-    delete d;
+    delete thread;
+    delete painter;
+    delete image;
 }
 
 void DrawingWindow::setColor(float red, float green, float blue)
 {
-    d->fgColor.setRgbF(red, green, blue);
-    d->applyColor();
+    fgColor.setRgbF(red, green, blue);
+    applyColor();
 }
 
 void DrawingWindow::setColor(const char *name)
 {
-    d->fgColor.setNamedColor(name);
-    d->applyColor();
+    fgColor.setNamedColor(name);
+    applyColor();
 }
 
 void DrawingWindow::setBgColor(float red, float green, float blue)
 {
-    d->bgColor.setRgbF(red, green, blue);
+    bgColor.setRgbF(red, green, blue);
 }
 
 void DrawingWindow::setBgColor(const char *name)
 {
-    d->bgColor.setNamedColor(name);
+    bgColor.setNamedColor(name);
 }
 
 void DrawingWindow::clearGraph()
 {
-    d->safeLock(d->imageMutex);
-    d->painter->fillRect(d->image->rect(), d->bgColor);    
-    d->dirty();
-    d->safeUnlock(d->imageMutex);
+    safeLock(imageMutex);
+    painter->fillRect(image->rect(), bgColor);    
+    dirty();
+    safeUnlock(imageMutex);
 }
 
 void DrawingWindow::drawPoint(int x, int y)
 {
-    d->safeLock(d->imageMutex);
-    d->painter->drawPoint(x, y);
-    d->dirty(x, y);
-    d->safeUnlock(d->imageMutex);
+    safeLock(imageMutex);
+    painter->drawPoint(x, y);
+    dirty(x, y);
+    safeUnlock(imageMutex);
 }
 
 void DrawingWindow::drawLine(int x1, int y1, int x2, int y2)
 {
-    d->safeLock(d->imageMutex);
-    d->painter->drawLine(x1, y1, x2, y2);
-    d->dirty(x1, y1, x2, y2);
-    d->safeUnlock(d->imageMutex);
+    safeLock(imageMutex);
+    painter->drawLine(x1, y1, x2, y2);
+    dirty(x1, y1, x2, y2);
+    safeUnlock(imageMutex);
 }
 
 void DrawingWindow::drawRect(int x1, int y1, int x2, int y2)
@@ -158,49 +107,49 @@ void DrawingWindow::drawRect(int x1, int y1, int x2, int y2)
     QRect r;
     r.setCoords(x1, y1, x2 - 1, y2 - 1);
     r = r.normalized();
-    d->safeLock(d->imageMutex);
-    d->painter->drawRect(r);
+    safeLock(imageMutex);
+    painter->drawRect(r);
     r.adjust(0, 0, 1, 1);
-    d->dirty(r);
-    d->safeUnlock(d->imageMutex);
+    dirty(r);
+    safeUnlock(imageMutex);
 }
 
 void DrawingWindow::fillRect(int x1, int y1, int x2, int y2)
 {
-    d->painter->setBrush(d->fgColor);
+    painter->setBrush(fgColor);
     drawRect(x1, y1, x2, y2);
-    d->painter->setBrush(Qt::NoBrush);
+    painter->setBrush(Qt::NoBrush);
 }
 
 void DrawingWindow::drawCircle(int x, int y, int r)
 {
     QRect rect;
     rect.setCoords(x - r, y - r, x + r - 1, y + r - 1);
-    d->safeLock(d->imageMutex);
-    d->painter->drawEllipse(rect);
+    safeLock(imageMutex);
+    painter->drawEllipse(rect);
     rect.adjust(0, 0, 1, 1);
-    d->dirty(rect);
-    d->safeUnlock(d->imageMutex);
+    dirty(rect);
+    safeUnlock(imageMutex);
 }
 
 void DrawingWindow::fillCircle(int x, int y, int r)
 {
-    d->painter->setBrush(d->fgColor);
+    painter->setBrush(fgColor);
     drawCircle(x, y, r);
-    d->painter->setBrush(Qt::NoBrush);
+    painter->setBrush(Qt::NoBrush);
 }
 
 bool DrawingWindow::sync(unsigned long time)
 {
     bool synced;
-    d->safeLock(d->syncMutex);
-    if (d->terminateThread) {
+    safeLock(syncMutex);
+    if (terminateThread) {
         synced = false;
     } else {
         qApp->postEvent(this, new QEvent(QEvent::User));
-        synced = d->syncCondition.wait(&d->syncMutex, time);
+        synced = syncCondition.wait(&syncMutex, time);
     }
-    d->safeUnlock(d->syncMutex);
+    safeUnlock(syncMutex);
     return synced;
 }
 
@@ -221,24 +170,24 @@ void DrawingWindow::usleep(unsigned long usecs)
 
 void DrawingWindow::closeEvent(QCloseEvent *ev)
 {
-    d->timer.stop();
-    d->thread->terminate();
-    d->syncMutex.lock();
-    d->terminateThread = true;  // this flag is needed for the case
+    timer.stop();
+    thread->terminate();
+    syncMutex.lock();
+    terminateThread = true;     // this flag is needed for the case
                                 // where the following wakeAll() call
                                 // occurs between the
                                 // setTerminationEnable(false) and the
                                 // mutex lock in safeLock() called
                                 // from sync()
-    d->syncCondition.wakeAll();
-    d->syncMutex.unlock();
+    syncCondition.wakeAll();
+    syncMutex.unlock();
     QWidget::closeEvent(ev);
-    d->thread->wait();
+    thread->wait();
 }
 
 void DrawingWindow::customEvent(QEvent *)
 {
-    d->update();
+    mayUpdate();
     qApp->sendPostedEvents(this, QEvent::UpdateLater);
     qApp->sendPostedEvents(this, QEvent::UpdateRequest);
     qApp->sendPostedEvents(this, QEvent::Paint);
@@ -248,9 +197,9 @@ void DrawingWindow::customEvent(QEvent *)
                         QEventLoop::X11ExcludeTimers);
     qApp->flush();
     qApp->syncX();
-    d->syncMutex.lock();
-    d->syncCondition.wakeAll();
-    d->syncMutex.unlock();
+    syncMutex.lock();
+    syncCondition.wakeAll();
+    syncMutex.unlock();
 }
 
 void DrawingWindow::keyPressEvent(QKeyEvent *ev)
@@ -271,66 +220,54 @@ void DrawingWindow::keyPressEvent(QKeyEvent *ev)
 void DrawingWindow::paintEvent(QPaintEvent *ev)
 {
     QPainter widgetPainter(this);
-    d->imageMutex.lock();
-    QImage imageCopy(*d->image);
-    d->imageMutex.unlock();
+    imageMutex.lock();
+    QImage imageCopy(*image);
+    imageMutex.unlock();
     QRect rect = ev->rect();
     widgetPainter.drawImage(rect, imageCopy, rect);
 }
 
 void DrawingWindow::showEvent(QShowEvent *ev)
 {
-    d->timer.start(d->paintInterval, this);
-    d->thread->start_once(QThread::IdlePriority);
+    timer.start(paintInterval, this);
+    thread->start_once(QThread::IdlePriority);
     QWidget::showEvent(ev);
 }
 
 void DrawingWindow::timerEvent(QTimerEvent *ev)
 {
-    if (ev->timerId() == d->timer.timerId()) {
-        d->update();
-        d->timer.start(d->paintInterval, this);
+    if (ev->timerId() == timer.timerId()) {
+        mayUpdate();
+        timer.start(paintInterval, this);
     } else {
         QWidget::timerEvent(ev);
     }
 }
 
-//--- DrawingWindowPrivate ---------------------------------------------
+//--- DrawingWindow (private methods) ----------------------------------
 
-DrawingWindowPrivate::DrawingWindowPrivate(DrawingWindow *w,
-                                           DrawingWindow::ThreadFunction f)
-    : q(w)
-    , terminateThread(false)
-    , lockCount(0)
-    , image(new QImage(q->width, q->height, QImage::Format_RGB32))
-    , painter(new QPainter(image))
-    , thread(new DrawingThread(*q, f))
+void DrawingWindow::initialize(DrawingWindow::ThreadFunction f)
 {
-}
+    terminateThread = false;
+    lockCount = 0;
+    image = new QImage(width, height, QImage::Format_RGB32);
+    painter = new QPainter(image);
+    thread = new DrawingThread(*this, f);
 
-void DrawingWindowPrivate::initialize()
-{
-    q->setFocusPolicy(Qt::StrongFocus);
-    q->setFixedSize(image->size());
-    q->setAttribute(Qt::WA_OpaquePaintEvent);
-    q->setFocus();
+    setFocusPolicy(Qt::StrongFocus);
+    setFixedSize(image->size());
+    setAttribute(Qt::WA_OpaquePaintEvent);
+    setFocus();
 
-    q->setColor("black");
-    q->setBgColor("white");
-    q->clearGraph();
+    setColor("black");
+    setBgColor("white");
+    clearGraph();
 
     dirtyFlag = false;
 }
 
-DrawingWindowPrivate::~DrawingWindowPrivate()
-{
-    delete thread;
-    delete painter;
-    delete image;
-}
-
 inline
-void DrawingWindowPrivate::applyColor()
+void DrawingWindow::applyColor()
 {
     QPen pen(painter->pen());
     pen.setColor(fgColor);
@@ -338,7 +275,7 @@ void DrawingWindowPrivate::applyColor()
 }
 
 inline
-void DrawingWindowPrivate::safeLock(QMutex &mutex)
+void DrawingWindow::safeLock(QMutex &mutex)
 {
     if (lockCount++ == 0)
         thread->setTerminationEnabled(false);
@@ -346,7 +283,7 @@ void DrawingWindowPrivate::safeLock(QMutex &mutex)
 }
 
 inline
-void DrawingWindowPrivate::safeUnlock(QMutex &mutex)
+void DrawingWindow::safeUnlock(QMutex &mutex)
 {
     mutex.unlock();
     if (--lockCount == 0)
@@ -354,27 +291,27 @@ void DrawingWindowPrivate::safeUnlock(QMutex &mutex)
 }
 
 inline
-void DrawingWindowPrivate::dirty()
+void DrawingWindow::dirty()
 {
     dirtyFlag = true;
     dirtyRect = image->rect();
 }
 
 inline
-void DrawingWindowPrivate::dirty(int x, int y)
+void DrawingWindow::dirty(int x, int y)
 {
     dirty(QRect(x, y, 1, 1));
 }
 
 inline
-void DrawingWindowPrivate::dirty(int x1, int y1, int x2, int y2)
+void DrawingWindow::dirty(int x1, int y1, int x2, int y2)
 {
     QRect r;
-    r.setCoords(x1, y1, x2, y2);
+    r.setCoords(x1, y1, x2, y2); // xy2 + 1 ???
     dirty(r.normalized());
 }
 
-void DrawingWindowPrivate::dirty(const QRect &rect)
+void DrawingWindow::dirty(const QRect &rect)
 {
     if (dirtyFlag) {
         dirtyRect |= rect;
@@ -384,7 +321,7 @@ void DrawingWindowPrivate::dirty(const QRect &rect)
     }
 }
 
-void DrawingWindowPrivate::update()
+void DrawingWindow::mayUpdate()
 {
     imageMutex.lock();
     bool dirty = dirtyFlag;
@@ -392,7 +329,7 @@ void DrawingWindowPrivate::update()
     dirtyFlag = false;
     imageMutex.unlock();
     if (dirty)
-        q->update(rect);
+        update(rect);
 }
 
 //--- DrawingThread ----------------------------------------------------
