@@ -48,6 +48,8 @@ public:
     void drawCircle(int x, int y, int r);
     void fillCircle(int x, int y, int r);
 
+    void drawText(int x, int y, const char *text);
+
     bool sync(unsigned long time = ULONG_MAX);
 
     void sleep(unsigned long secs);

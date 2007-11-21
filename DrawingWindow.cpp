@@ -139,6 +139,16 @@ void DrawingWindow::fillCircle(int x, int y, int r)
     painter->setBrush(Qt::NoBrush);
 }
 
+void DrawingWindow::drawText(int x, int y, const char *text)
+{
+    QRect r(image->rect());
+    r.moveTo(x, y);
+    safeLock(imageMutex);
+    painter->drawText(r, 0, text, &r);
+    dirty(r);
+    safeUnlock(imageMutex);
+}
+
 bool DrawingWindow::sync(unsigned long time)
 {
     bool synced;
