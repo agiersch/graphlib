@@ -163,6 +163,11 @@ bool DrawingWindow::sync(unsigned long time)
     return synced;
 }
 
+void DrawingWindow::closeGraph()
+{
+    qApp->postEvent(this, new QCloseEvent());
+}
+
 void DrawingWindow::sleep(unsigned long secs)
 {
     DrawingThread::sleep(secs);
@@ -180,19 +185,31 @@ void DrawingWindow::usleep(unsigned long usecs)
 
 void DrawingWindow::closeEvent(QCloseEvent *ev)
 {
+    qDebug(">>>CLOSING<<<\n");
+    char x = 'A';
+    qDebug(">>> %c <<<\n", x++);
     timer.stop();
+    qDebug(">>> %c <<<\n", x++);
     thread->terminate();
+    qDebug(">>> %c <<<\n", x++);
     syncMutex.lock();
+    qDebug(">>> %c <<<\n", x++);
     terminateThread = true;     // this flag is needed for the case
                                 // where the following wakeAll() call
                                 // occurs between the
                                 // setTerminationEnable(false) and the
                                 // mutex lock in safeLock() called
                                 // from sync()
+    qDebug(">>> %c <<<\n", x++);
     syncCondition.wakeAll();
+    qDebug(">>> %c <<<\n", x++);
     syncMutex.unlock();
+    qDebug(">>> %c <<<\n", x++);
     QWidget::closeEvent(ev);
+    qDebug(">>> %c <<<\n", x++);
     thread->wait();
+    qDebug(">>> %c <<<\n", x++);
+    qDebug(">>>CLOSED<<<\n");
 }
 
 void DrawingWindow::customEvent(QEvent *)

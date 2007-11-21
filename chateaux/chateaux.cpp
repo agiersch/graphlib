@@ -258,7 +258,7 @@ int tir(DrawingWindow& w,
     return collision == 3 ? 0 : collision;
 }
 
-void jeu1(DrawingWindow& w)
+int jeu1(DrawingWindow& w)
 {
     initialise(w);
     int joueur = 2;
@@ -267,19 +267,19 @@ void jeu1(DrawingWindow& w)
     do {
         joueur = 3 - joueur;
 
-        std::cout << "-=| Joueur " << joueur << " |=-\n";
+        std::cout << "-=| Joueur " << joueur << " |=-";
 
         float alpha;
         float v0;
         if (joueur <= nbJoueurs) {
-            std::cout << "angle ? ";
+            std::cout << "\nangle ? ";
             std::cin >> alpha;
             std::cout << "vitesse initiale ? ";
             std::cin >> v0;
         } else {
             alpha = frand(10, 90);
             v0 = frand(10, 100);
-            std::cout << "[ " << alpha << " ; " << v0 << " ]\n";
+            std::cout << " [ " << alpha << " ; " << v0 << " ]\n";
         }
 
         alpha = deg2rad(alpha);
@@ -302,14 +302,31 @@ void jeu1(DrawingWindow& w)
     else
         std::cout << " a perdu";
     std::cout << " !\n";
+    return perdant;
 }
 
 void jeu(DrawingWindow& w)
 {
-    while (1) {
-        jeu1(w);
-        w.sleep(5);
-    }
+    int score1 = 0;
+    int score2 = 0;
+    bool rejouer = true;
+    do {
+        int perdant = jeu1(w);
+        if (perdant == 1)
+            score2++;
+        else if (perdant == 2)
+            score1++;
+        std::cout << "### SCORE : " << score1 << " / " << score2 << " ###\n";
+        if (nbJoueurs == 0)
+            w.sleep(2);
+        else {
+            char r;
+            std::cout << "Recommencer (o/n) ? ";
+            std::cin >> r;
+            rejouer = r == 'o';
+        }
+    } while (rejouer);
+    w.closeGraph();
 }
 
 int main(int argc, char *argv[])

@@ -52,6 +52,8 @@ public:
 
     bool sync(unsigned long time = ULONG_MAX);
 
+    void closeGraph();
+
     void sleep(unsigned long secs);
     void msleep(unsigned long msecs);
     void usleep(unsigned long usecs);
