@@ -247,6 +247,7 @@ int tir(DrawingWindow& w,
         vy += ay * dt;
 
         w.msleep(10);
+        w.sync();
         w.setColor("skyblue");
         w.fillCircle(wx, wy, 2);
 //         w.setColor("black");
@@ -320,6 +321,7 @@ int jeu1(DrawingWindow& w)
     w.setBgColor("white");
     w.drawTextBg(w.width / 2, w.height / 3, msg.str().c_str(),
                  Qt::AlignCenter);
+    w.sync();
     std::cout << msg.str() << std::endl;
     return perdant;
 }
