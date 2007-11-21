@@ -166,7 +166,7 @@ void dessineExplosion(DrawingWindow& w, float rx, float ry)
         w.drawCircle(x, y, i);
         w.msleep(20);
     }
-    w.setColor("white");
+    w.setColor("skyblue");
     for (i = 0; i < maxray; i++) {
         w.drawCircle(x, y, i);
         w.msleep(10);
@@ -201,7 +201,7 @@ void initialise(DrawingWindow& w)
     largeurMont = frand(largeurMin, largeurMax);
     hauteurMont = frand(hauteurMin, hauteurMax);
     wnd = frand(-30, 30);
-    w.setBgColor("white");
+    w.setBgColor("skyblue");
     w.clearGraph();
     dessineTerrain(w, largeurMont, hauteurMont);
     dessineChateau(w, positionChateau1);
@@ -241,7 +241,7 @@ int tir(DrawingWindow& w,
         vy += ay * dt;
 
         w.msleep(10);
-        w.setColor("white");
+        w.setColor("skyblue");
         w.fillCircle(wx, wy, 2);
 //         w.setColor("black");
 //         w.drawPoint(wx, wy);
