@@ -165,7 +165,7 @@ bool DrawingWindow::sync(unsigned long time)
 
 void DrawingWindow::closeGraph()
 {
-    qApp->postEvent(this, new QCloseEvent());
+    qApp->postEvent(this, new QEvent(QEvent::Type(QEvent::User + 1)));
 }
 
 void DrawingWindow::sleep(unsigned long secs)
@@ -185,48 +185,43 @@ void DrawingWindow::usleep(unsigned long usecs)
 
 void DrawingWindow::closeEvent(QCloseEvent *ev)
 {
-    qDebug(">>>CLOSING<<<\n");
-    char x = 'A';
-    qDebug(">>> %c <<<\n", x++);
     timer.stop();
-    qDebug(">>> %c <<<\n", x++);
     thread->terminate();
-    qDebug(">>> %c <<<\n", x++);
     syncMutex.lock();
-    qDebug(">>> %c <<<\n", x++);
     terminateThread = true;     // this flag is needed for the case
                                 // where the following wakeAll() call
                                 // occurs between the
                                 // setTerminationEnable(false) and the
                                 // mutex lock in safeLock() called
                                 // from sync()
-    qDebug(">>> %c <<<\n", x++);
     syncCondition.wakeAll();
-    qDebug(">>> %c <<<\n", x++);
     syncMutex.unlock();
-    qDebug(">>> %c <<<\n", x++);
     QWidget::closeEvent(ev);
-    qDebug(">>> %c <<<\n", x++);
     thread->wait();
-    qDebug(">>> %c <<<\n", x++);
-    qDebug(">>>CLOSED<<<\n");
 }
 
-void DrawingWindow::customEvent(QEvent *)
+void DrawingWindow::customEvent(QEvent *ev)
 {
-    mayUpdate();
-    qApp->sendPostedEvents(this, QEvent::UpdateLater);
-    qApp->sendPostedEvents(this, QEvent::UpdateRequest);
-    qApp->sendPostedEvents(this, QEvent::Paint);
-    qApp->processEvents(QEventLoop::ExcludeUserInputEvents |
-                        QEventLoop::ExcludeSocketNotifiers |
-                        QEventLoop::DeferredDeletion |
-                        QEventLoop::X11ExcludeTimers);
-    qApp->flush();
-    qApp->syncX();
-    syncMutex.lock();
-    syncCondition.wakeAll();
-    syncMutex.unlock();
+    switch ((int )ev->type()) {
+    case QEvent::User:
+        mayUpdate();
+        qApp->sendPostedEvents(this, QEvent::UpdateLater);
+        qApp->sendPostedEvents(this, QEvent::UpdateRequest);
+        qApp->sendPostedEvents(this, QEvent::Paint);
+        qApp->processEvents(QEventLoop::ExcludeUserInputEvents |
+                            QEventLoop::ExcludeSocketNotifiers |
+                            QEventLoop::DeferredDeletion |
+                            QEventLoop::X11ExcludeTimers);
+        qApp->flush();
+        qApp->syncX();
+        syncMutex.lock();
+        syncCondition.wakeAll();
+        syncMutex.unlock();
+        break;
+    case QEvent::User + 1:
+        close();
+        break;
+    }
 }
 
 void DrawingWindow::keyPressEvent(QKeyEvent *ev)

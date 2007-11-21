@@ -321,8 +321,10 @@ void jeu(DrawingWindow& w)
             w.sleep(2);
         else {
             char r;
-            std::cout << "Recommencer (o/n) ? ";
-            std::cin >> r;
+            do {
+                std::cout << "Recommencer (o/n) ? ";
+                std::cin >> r;
+            } while (std::cin.good() && r != 'o' && r != 'n');
             rejouer = r == 'o';
         }
     } while (rejouer);
