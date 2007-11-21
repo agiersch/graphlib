@@ -4,6 +4,7 @@
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
+#include <sstream>
 
 /* Note : les coordonnées réelles vont de -100 à +100 en abscisse, et
  *  de -10 à +140 en ordonnée
@@ -200,10 +201,16 @@ void initialise(DrawingWindow& w)
     largeurMont = frand(largeurMin, largeurMax);
     hauteurMont = frand(hauteurMin, hauteurMax);
     wnd = frand(-30, 30);
+    w.setBgColor("white");
     w.clearGraph();
     dessineTerrain(w, largeurMont, hauteurMont);
     dessineChateau(w, positionChateau1);
     dessineChateau(w, positionChateau2);
+    w.setColor("wheat");
+    w.drawText(rtowX(w, positionChateau1), rtowY(w, 0) + 8, "Joueur 1",
+               Qt::AlignHCenter);
+    w.drawText(rtowX(w, positionChateau2), rtowY(w, 0) + 8, "Joueur 2",
+               Qt::AlignHCenter);
     dessineVent(w, wnd);
 }
 
@@ -296,12 +303,17 @@ int jeu1(DrawingWindow& w)
         dessineVent(w, wnd);
     } while (!perdant);
     dessineFlammes(w, x, y);
-    std::cout << "Joueur " << perdant;
+    std::stringstream msg;
+    msg << "Joueur " << perdant;
     if (perdant == joueur)
-        std::cout << " s'est suicidé";
+        msg << " s'est suicidé !";
     else
-        std::cout << " a perdu";
-    std::cout << " !\n";
+        msg << " a perdu !";
+    w.setColor("darkred");
+    w.setBgColor("white");
+    w.drawTextBg(w.width / 2, w.height / 3, msg.str().c_str(),
+                 Qt::AlignCenter);
+    std::cout << msg.str() << "\n";
     return perdant;
 }
 

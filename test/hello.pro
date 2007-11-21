@@ -3,7 +3,7 @@ TARGET = hello
 
 CONFIG += qt
 CONFIG += debug
-#CONFIG += profile
+CONFIG += profile
 
 profile {
 	QMAKE_CFLAGS += -pg
@@ -12,6 +12,8 @@ profile {
 }
 
 INCLUDEPATH += ../
+DEPENDPATH += ../
+
 HEADERS += ../DrawingWindow.h
 SOURCES += ../DrawingWindow.cpp \
            hello.cpp

@@ -12,6 +12,8 @@ profile {
 }
 
 INCLUDEPATH += ../
+DEPENDPATH += ../
+
 HEADERS += ../DrawingWindow.h
 SOURCES += ../DrawingWindow.cpp \
            chateaux.cpp

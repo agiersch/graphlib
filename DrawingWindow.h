@@ -5,6 +5,8 @@
 #include <QColor>
 #include <QImage>
 #include <QMutex>
+#include <QPainter>
+#include <QPen>
 #include <QRect>
 #include <QWaitCondition>
 #include <QWidget>
@@ -34,10 +36,13 @@ public:
     const int height;
 
     // http://www.w3.org/TR/SVG/types.html#ColorKeywords
-    void setColor(float red, float green, float blue);
+    void setColor(unsigned int color);
     void setColor(const char *name);
-    void setBgColor(float red, float green, float blue);
+    void setColor(float red, float green, float blue);
+
+    void setBgColor(unsigned int color);
     void setBgColor(const char *name);
+    void setBgColor(float red, float green, float blue);
 
     void clearGraph();
 
@@ -48,7 +53,10 @@ public:
     void drawCircle(int x, int y, int r);
     void fillCircle(int x, int y, int r);
 
-    void drawText(int x, int y, const char *text);
+    void drawText(int x, int y, const char *text, int flags = 0);
+    void drawTextBg(int x, int y, const char *text, int flags = 0);
+
+    unsigned int getPointColor(int x, int y);
 
     bool sync(unsigned long time = ULONG_MAX);
 
@@ -79,9 +87,6 @@ private:
     QImage *image;
     QPainter *painter;
 
-    QColor fgColor;
-    QColor bgColor;
-
     bool dirtyFlag;
     QRect dirtyRect;
 
@@ -89,7 +94,10 @@ private:
 
     void initialize(ThreadFunction f);
 
-    void applyColor();
+    void setColor(const QColor& color);
+    void setBgColor(const QColor& color);
+    QColor getColor();
+    QColor getBgColor();
 
     void safeLock(QMutex &mutex);
     void safeUnlock(QMutex &mutex);

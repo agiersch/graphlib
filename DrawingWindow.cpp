@@ -1,7 +1,6 @@
 #include "DrawingWindow.h"
 #include <QApplication>
 #include <QPaintEvent>
-#include <QPainter>
 #include <QThread>
 #include <QTimerEvent>
 
@@ -56,32 +55,40 @@ DrawingWindow::~DrawingWindow()
     delete image;
 }
 
-void DrawingWindow::setColor(float red, float green, float blue)
+void DrawingWindow::setColor(unsigned int color)
 {
-    fgColor.setRgbF(red, green, blue);
-    applyColor();
+    setColor(QColor::fromRgb(color));
 }
 
 void DrawingWindow::setColor(const char *name)
 {
-    fgColor.setNamedColor(name);
-    applyColor();
+    setColor(QColor(name));
 }
 
-void DrawingWindow::setBgColor(float red, float green, float blue)
+void DrawingWindow::setColor(float red, float green, float blue)
 {
-    bgColor.setRgbF(red, green, blue);
+    setColor(QColor::fromRgbF(red, green, blue));
+}
+
+void DrawingWindow::setBgColor(unsigned int color)
+{
+    setBgColor(QColor::fromRgb(color));
 }
 
 void DrawingWindow::setBgColor(const char *name)
 {
-    bgColor.setNamedColor(name);
+    setBgColor(QColor(name));
+}
+
+void DrawingWindow::setBgColor(float red, float green, float blue)
+{
+    setBgColor(QColor::fromRgbF(red, green, blue));
 }
 
 void DrawingWindow::clearGraph()
 {
     safeLock(imageMutex);
-    painter->fillRect(image->rect(), bgColor);    
+    painter->fillRect(image->rect(), getBgColor());
     dirty();
     safeUnlock(imageMutex);
 }
@@ -116,7 +123,7 @@ void DrawingWindow::drawRect(int x1, int y1, int x2, int y2)
 
 void DrawingWindow::fillRect(int x1, int y1, int x2, int y2)
 {
-    painter->setBrush(fgColor);
+    painter->setBrush(getColor());
     drawRect(x1, y1, x2, y2);
     painter->setBrush(Qt::NoBrush);
 }
@@ -134,19 +141,56 @@ void DrawingWindow::drawCircle(int x, int y, int r)
 
 void DrawingWindow::fillCircle(int x, int y, int r)
 {
-    painter->setBrush(fgColor);
+    painter->setBrush(getColor());
     drawCircle(x, y, r);
     painter->setBrush(Qt::NoBrush);
 }
 
-void DrawingWindow::drawText(int x, int y, const char *text)
+void DrawingWindow::drawText(int x, int y, const char *text, int flags)
 {
     QRect r(image->rect());
-    r.moveTo(x, y);
+    switch (flags & Qt::AlignHorizontal_Mask) {
+    case Qt::AlignRight:
+        r.setRight(x);
+        break;
+    case Qt::AlignHCenter:
+        if (x < width / 2)
+            r.setLeft(2 * x - width + 1);
+        else
+            r.setRight(2 * x);
+        break;
+    default:
+        r.setLeft(x);
+    }
+    switch (flags & Qt::AlignVertical_Mask) {
+    case Qt::AlignBottom:
+        r.setBottom(y);
+        break;
+    case Qt::AlignVCenter:
+        if (y < height / 2)
+            r.setTop(2 * y - height + 1);
+        else
+            r.setBottom(2 * y);
+        break;
+    default:
+        r.setTop(y);
+    }
     safeLock(imageMutex);
-    painter->drawText(r, 0, text, &r);
+    painter->drawText(r, flags, text, &r);
     dirty(r);
     safeUnlock(imageMutex);
+}
+
+void DrawingWindow::drawTextBg(int x, int y, const char *text, int flags)
+{
+    painter->setBackgroundMode(Qt::OpaqueMode);
+    drawText(x, y, text, flags);
+    painter->setBackgroundMode(Qt::TransparentMode);
+}
+
+unsigned int DrawingWindow::getPointColor(int x, int y)
+{
+    return image->pixel(x, y);
 }
 
 bool DrawingWindow::sync(unsigned long time)
@@ -289,11 +333,29 @@ void DrawingWindow::initialize(DrawingWindow::ThreadFunction f)
 }
 
 inline
-void DrawingWindow::applyColor()
+void DrawingWindow::setColor(const QColor& color)
 {
     QPen pen(painter->pen());
-    pen.setColor(fgColor);
+    pen.setColor(color);
     painter->setPen(pen);
+}
+
+inline
+void DrawingWindow::setBgColor(const QColor& color)
+{
+    painter->setBackground(color);
+}
+
+inline
+QColor DrawingWindow::getColor()
+{
+    return painter->pen().color();
+}
+
+inline
+QColor DrawingWindow::getBgColor()
+{
+    return painter->background().color();
 }
 
 inline
