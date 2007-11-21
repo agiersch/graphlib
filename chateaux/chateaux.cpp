@@ -173,7 +173,7 @@ void dessineExplosion(DrawingWindow& w, float rx, float ry)
         w.drawCircle(x, y, i);
         w.msleep(10);
     }
-    w.fillCircle(x, y, maxray - 1);
+    //    w.fillCircle(x, y, maxray - 1);
 }
 
 void dessineFlammes(DrawingWindow& w, float x0, float y0)
@@ -292,7 +292,8 @@ int jeu1(DrawingWindow& w)
         } else {
             alpha = frand(10, 90);
             v0 = frand(10, 100);
-            std::cout << " [ " << (int )alpha << "° ; " << (int )v0 << " ]\n";
+            std::cout << " [ " << (int )alpha << "° ; " << (int )v0 << " ]"
+                      << std::endl;
         }
 
         alpha = deg2rad(alpha);
@@ -319,7 +320,7 @@ int jeu1(DrawingWindow& w)
     w.setBgColor("white");
     w.drawTextBg(w.width / 2, w.height / 3, msg.str().c_str(),
                  Qt::AlignCenter);
-    std::cout << msg.str() << "\n";
+    std::cout << msg.str() << std::endl;
     return perdant;
 }
 
@@ -332,7 +333,8 @@ void jeu(DrawingWindow& w)
             score2++;
         else if (perdant == 2)
             score1++;
-        std::cout << "### SCORE : " << score1 << " / " << score2 << " ###\n";
+        std::cout << "### SCORE : " << score1 << " / " << score2 << " ###"
+                  << std::endl;
         if (nbJoueurs == 0)
             w.sleep(2);
         else {
