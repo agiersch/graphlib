@@ -309,6 +309,7 @@ int jeu1(DrawingWindow& w)
         perdant = tir(w, x0, y0, v0, alpha, x, y);
         dessineExplosion(w, x, y);
         dessineVent(w, wnd);
+        w.sync();
     } while (!perdant);
     dessineFlammes(w, x, y);
     std::stringstream msg;
