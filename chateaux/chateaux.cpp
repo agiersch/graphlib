@@ -292,12 +292,12 @@ int jeu1(DrawingWindow& w)
         alpha = deg2rad(alpha);
         float x0;
         if (joueur == 1) {
-            x0 = positionChateau1 + 8;
+            x0 = positionChateau1 + 0.8 * largeurChateau;
         } else {
-            x0 = positionChateau2 - 8;
+            x0 = positionChateau2 - 0.8 * largeurChateau;
             alpha = PI - alpha;
         }
-        float y0 = 8;
+        float y0 = hauteurChateau + 1;
         perdant = tir(w, x0, y0, v0, alpha, x, y);
         dessineExplosion(w, x, y);
         dessineVent(w, wnd);
