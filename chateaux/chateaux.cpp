@@ -247,7 +247,7 @@ int tir(DrawingWindow& w,
         vy += ay * dt;
 
         w.msleep(10);
-        w.sync();
+//         w.sync();
         w.setColor("skyblue");
         w.fillCircle(wx, wy, 2);
 //         w.setColor("black");
@@ -281,6 +281,7 @@ int jeu1(DrawingWindow& w)
     do {
         joueur = 3 - joueur;
 
+        w.sync();
         std::cout << "-=| Joueur " << joueur << " |=-";
 
         float alpha;
@@ -309,7 +310,6 @@ int jeu1(DrawingWindow& w)
         perdant = tir(w, x0, y0, v0, alpha, x, y);
         dessineExplosion(w, x, y);
         dessineVent(w, wnd);
-        w.sync();
     } while (!perdant);
     dessineFlammes(w, x, y);
     std::stringstream msg;
