@@ -33,6 +33,8 @@ const float k = 0.005;
 const float dt = 0.05;
 
 int nbJoueurs = 2;
+int score1 = 0;
+int score2 = 0;
 
 float largeurMont;
 float hauteurMont;
@@ -204,6 +206,7 @@ void initialise(DrawingWindow& w)
     w.setBgColor("skyblue");
     w.clearGraph();
     dessineTerrain(w, largeurMont, hauteurMont);
+    dessineVent(w, wnd);
     dessineChateau(w, positionChateau1);
     dessineChateau(w, positionChateau2);
     w.setColor("wheat");
@@ -211,7 +214,10 @@ void initialise(DrawingWindow& w)
                Qt::AlignHCenter);
     w.drawText(rtowX(w, positionChateau2), rtowY(w, 0) + 8, "Joueur 2",
                Qt::AlignHCenter);
-    dessineVent(w, wnd);
+    std::stringstream s;
+    s << score1 << " / " << score2;
+    w.drawText(rtowX(w, 0), rtowY(w, 0) + 8, s.str().c_str(),
+               Qt::AlignHCenter);
 }
 
 /* Retour : numéro du perdant, 0 sinon
@@ -319,8 +325,6 @@ int jeu1(DrawingWindow& w)
 
 void jeu(DrawingWindow& w)
 {
-    int score1 = 0;
-    int score2 = 0;
     bool rejouer = true;
     do {
         int perdant = jeu1(w);
