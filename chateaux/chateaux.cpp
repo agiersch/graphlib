@@ -313,11 +313,11 @@ int jeu1(DrawingWindow& w)
     } while (!perdant);
     dessineFlammes(w, x, y);
     std::stringstream msg;
-    msg << "Joueur " << perdant;
+    msg << " Joueur " << perdant;
     if (perdant == joueur)
-        msg << " s'est suicidé !";
+        msg << " s'est suicidé ! ";
     else
-        msg << " a perdu !";
+        msg << " a perdu ! ";
     w.setColor("darkred");
     w.setBgColor("white");
     w.drawTextBg(w.width / 2, w.height / 3, msg.str().c_str(),
