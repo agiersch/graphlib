@@ -286,7 +286,7 @@ int jeu1(DrawingWindow& w)
         } else {
             alpha = frand(10, 90);
             v0 = frand(10, 100);
-            std::cout << " [ " << alpha << " ; " << v0 << " ]\n";
+            std::cout << " [ " << (int )alpha << "° ; " << (int )v0 << " ]\n";
         }
 
         alpha = deg2rad(alpha);
