@@ -20,6 +20,39 @@ private:
     friend class DrawingWindow;
 };
 
+enum UserEvents {
+    SyncRequest = QEvent::User,
+    CloseRequest,
+    DrawTextRequest,
+};
+
+namespace {
+    class SyncRequestEvent: public QEvent {
+    public:
+        SyncRequestEvent(): QEvent(static_cast<QEvent::Type>(SyncRequest))
+        { }
+    };
+
+    class CloseRequestEvent: public QEvent {
+    public:
+        CloseRequestEvent(): QEvent(static_cast<QEvent::Type>(CloseRequest))
+        { }
+    };
+
+    class DrawTextEvent: public QEvent {
+    public:
+        const int x;
+        const int y;
+        const char *text;
+        const int flags;
+        DrawTextEvent(int x_, int y_, const char* text_, int flags_)
+            : QEvent(static_cast<QEvent::Type>(DrawTextRequest))
+            , x(x_), y(y_), text(text_), flags(flags_)
+        { }
+    };
+
+}
+
 //--- DrawingWindow ----------------------------------------------------
 
 DrawingWindow::DrawingWindow(ThreadFunction f, int w, int h)
@@ -148,37 +181,12 @@ void DrawingWindow::fillCircle(int x, int y, int r)
 
 void DrawingWindow::drawText(int x, int y, const char *text, int flags)
 {
-    QRect r(image->rect());
-    switch (flags & Qt::AlignHorizontal_Mask) {
-    case Qt::AlignRight:
-        r.setRight(x);
-        break;
-    case Qt::AlignHCenter:
-        if (x < width / 2)
-            r.setLeft(2 * x - width + 1);
-        else
-            r.setRight(2 * x);
-        break;
-    default:
-        r.setLeft(x);
+    safeLock(syncMutex);
+    if (!terminateThread) {
+        qApp->postEvent(this, new DrawTextEvent(x, y, text, flags));
+        syncCondition.wait(&syncMutex);
     }
-    switch (flags & Qt::AlignVertical_Mask) {
-    case Qt::AlignBottom:
-        r.setBottom(y);
-        break;
-    case Qt::AlignVCenter:
-        if (y < height / 2)
-            r.setTop(2 * y - height + 1);
-        else
-            r.setBottom(2 * y);
-        break;
-    default:
-        r.setTop(y);
-    }
-    safeLock(imageMutex);
-    painter->drawText(r, flags, text, &r);
-    dirty(r);
-    safeUnlock(imageMutex);
+    safeUnlock(syncMutex);
 }
 
 void DrawingWindow::drawTextBg(int x, int y, const char *text, int flags)
@@ -200,7 +208,7 @@ bool DrawingWindow::sync(unsigned long time)
     if (terminateThread) {
         synced = false;
     } else {
-        qApp->postEvent(this, new QEvent(QEvent::User));
+        qApp->postEvent(this, new SyncRequestEvent());
         synced = syncCondition.wait(&syncMutex, time);
     }
     safeUnlock(syncMutex);
@@ -209,7 +217,7 @@ bool DrawingWindow::sync(unsigned long time)
 
 void DrawingWindow::closeGraph()
 {
-    qApp->postEvent(this, new QEvent(QEvent::Type(QEvent::User + 1)));
+    qApp->postEvent(this, new CloseRequestEvent());
 }
 
 void DrawingWindow::sleep(unsigned long secs)
@@ -247,23 +255,15 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
 void DrawingWindow::customEvent(QEvent *ev)
 {
     switch ((int )ev->type()) {
-    case QEvent::User:
-        mayUpdate();
-        qApp->sendPostedEvents(this, QEvent::UpdateLater);
-        qApp->sendPostedEvents(this, QEvent::UpdateRequest);
-        qApp->sendPostedEvents(this, QEvent::Paint);
-        qApp->processEvents(QEventLoop::ExcludeUserInputEvents |
-                            QEventLoop::ExcludeSocketNotifiers |
-                            QEventLoop::DeferredDeletion |
-                            QEventLoop::X11ExcludeTimers);
-        qApp->flush();
-        qApp->syncX();
-        syncMutex.lock();
-        syncCondition.wakeAll();
-        syncMutex.unlock();
+    case SyncRequest:
+        realSync();
         break;
-    case QEvent::User + 1:
+    case CloseRequest:
         close();
+        break;
+    case DrawTextRequest:
+        DrawTextEvent* tev = dynamic_cast<DrawTextEvent *>(ev);
+        realDrawText(tev->x, tev->y, tev->text, tev->flags);
         break;
     }
 }
@@ -295,9 +295,11 @@ void DrawingWindow::paintEvent(QPaintEvent *ev)
 
 void DrawingWindow::showEvent(QShowEvent *ev)
 {
+    QWidget::showEvent(ev);
+    qApp->flush();
+    qApp->syncX();
     timer.start(paintInterval, this);
     thread->start_once(QThread::IdlePriority);
-    QWidget::showEvent(ev);
 }
 
 void DrawingWindow::timerEvent(QTimerEvent *ev)
@@ -414,6 +416,59 @@ void DrawingWindow::mayUpdate()
     imageMutex.unlock();
     if (dirty)
         update(rect);
+}
+
+void DrawingWindow::realSync()
+{
+    mayUpdate();
+    qApp->sendPostedEvents(this, QEvent::UpdateLater);
+    qApp->sendPostedEvents(this, QEvent::UpdateRequest);
+    qApp->sendPostedEvents(this, QEvent::Paint);
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents |
+                        QEventLoop::ExcludeSocketNotifiers |
+                        QEventLoop::DeferredDeletion |
+                        QEventLoop::X11ExcludeTimers);
+    qApp->flush();
+    qApp->syncX();
+    syncMutex.lock();
+    syncCondition.wakeAll();
+    syncMutex.unlock();
+}
+
+void DrawingWindow::realDrawText(int x, int y, const char *text, int flags)
+{
+    QRect r(image->rect());
+    switch (flags & Qt::AlignHorizontal_Mask) {
+    case Qt::AlignRight:
+        r.setRight(x);
+        break;
+    case Qt::AlignHCenter:
+        if (x < width / 2)
+            r.setLeft(2 * x - width + 1);
+        else
+            r.setRight(2 * x);
+        break;
+    default:
+        r.setLeft(x);
+    }
+    switch (flags & Qt::AlignVertical_Mask) {
+    case Qt::AlignBottom:
+        r.setBottom(y);
+        break;
+    case Qt::AlignVCenter:
+        if (y < height / 2)
+            r.setTop(2 * y - height + 1);
+        else
+            r.setBottom(2 * y);
+        break;
+    default:
+        r.setTop(y);
+    }
+    syncMutex.lock();
+    painter->drawText(r, flags, text, &r);
+    dirty(r);
+    syncCondition.wakeAll();
+    syncMutex.unlock();
 }
 
 //--- DrawingThread ----------------------------------------------------

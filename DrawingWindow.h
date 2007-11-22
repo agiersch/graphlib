@@ -108,6 +108,8 @@ private:
     void dirty(const QRect &rect);
 
     void mayUpdate();
+    void realSync();
+    void realDrawText(int x, int y, const char *text, int flags);
 };
 
 #endif // !DRAWING_WINDOW_H
