@@ -14,28 +14,36 @@
 
 class DrawingThread;
 
+/*!
+ * Fenêtre de dessin.
+ *  
+ */
 class DrawingWindow: public QWidget {
 public:
+    //! Type de la fonction de dessin, passée en paramètre de construction.
     typedef void (*ThreadFunction)(DrawingWindow &);
 
+    //! Largeur par défaut de la fenêtre.
     static const int DEFAULT_WIDTH = 640;
+    //! Hauteur par défaut de la fenêtre.
     static const int DEFAULT_HEIGHT = 480;
 
     DrawingWindow(ThreadFunction fun,
-                  int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT);
+                  int width_ = DEFAULT_WIDTH, int height_ = DEFAULT_HEIGHT);
     DrawingWindow(QWidget *parent,
                   ThreadFunction fun,
-                  int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT);
+                  int width_ = DEFAULT_WIDTH, int height_ = DEFAULT_HEIGHT);
     DrawingWindow(QWidget *parent, Qt::WindowFlags flags,
                   ThreadFunction fun,
-                  int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT);
+                  int width_ = DEFAULT_WIDTH, int height_ = DEFAULT_HEIGHT);
 
     ~DrawingWindow();
 
+    //! Largeur de la fenêtre.
     const int width;
+    //! Hauteur de la fenêtre.
     const int height;
 
-    // http://www.w3.org/TR/SVG/types.html#ColorKeywords
     void setColor(unsigned int color);
     void setColor(const char *name);
     void setColor(float red, float green, float blue);
@@ -75,6 +83,7 @@ protected:
     void timerEvent(QTimerEvent *ev);
 
 private:
+    //! Intervalle de temps entre deux rendus (ms)
     static const int paintInterval = 33;
 
     QBasicTimer timer;
@@ -92,7 +101,7 @@ private:
 
     DrawingThread *thread;
 
-    void initialize(ThreadFunction f);
+    void initialize(ThreadFunction fun);
 
     void setColor(const QColor& color);
     void setBgColor(const QColor& color);
@@ -113,3 +122,7 @@ private:
 };
 
 #endif // !DRAWING_WINDOW_H
+
+// Local variables:
+// mode: c++
+// End:
