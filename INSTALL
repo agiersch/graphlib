@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+
+DEST = $(HOME)/CoursInfo/Algo_1A/tp/graph
+
+SRC = DrawingWindow.h DrawingWindow.cpp exemple.cpp exemple.pro
+
+.PHONY: install
+
+install:
+	install -m 644 $(SRC) $(DEST)
+	doxygen Doxyfile
+	install -m 755 -d $(DEST)/html
+	install -m 644 html/* $(DEST)/html
