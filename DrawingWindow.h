@@ -14,18 +14,11 @@
 
 class DrawingThread;
 
-/*!
- * Fenêtre de dessin.
- *  
- */
 class DrawingWindow: public QWidget {
 public:
-    //! Type de la fonction de dessin, passée en paramètre de construction.
     typedef void (*ThreadFunction)(DrawingWindow &);
 
-    //! Largeur par défaut de la fenêtre.
     static const int DEFAULT_WIDTH = 640;
-    //! Hauteur par défaut de la fenêtre.
     static const int DEFAULT_HEIGHT = 480;
 
     DrawingWindow(ThreadFunction fun,
@@ -39,9 +32,7 @@ public:
 
     ~DrawingWindow();
 
-    //! Largeur de la fenêtre.
     const int width;
-    //! Hauteur de la fenêtre.
     const int height;
 
     void setColor(unsigned int color);

@@ -4,8 +4,7 @@
 #include <QThread>
 #include <QTimerEvent>
 
-/*! Classe de thread.
- */
+//! Classe de thread.
 class DrawingThread: public QThread {
 public:
     DrawingThread(DrawingWindow &w, DrawingWindow::ThreadFunction f);
@@ -28,24 +27,21 @@ enum UserEvents {
     DrawTextRequest,            //!< Demande d'écriture de texte.
 };
 
-/*! Demande de synchronisation.
- */
+//! Demande de synchronisation.
 class SyncRequestEvent: public QEvent {
 public:
     SyncRequestEvent(): QEvent(static_cast<QEvent::Type>(SyncRequest))
     { }
 };
 
-/*! Demande de fermeture de fenêtre.
- */
+//! Demande de fermeture de fenêtre.
 class CloseRequestEvent: public QEvent {
 public:
     CloseRequestEvent(): QEvent(static_cast<QEvent::Type>(CloseRequest))
     { }
 };
 
-/*! Demande de tracé de texte. 
- */
+//! Demande de tracé de texte. 
 class DrawTextEvent: public QEvent {
 public:
     const int x;
@@ -60,8 +56,33 @@ public:
 
 //--- DrawingWindow ----------------------------------------------------
 
-/*! Constructeur.
+/*! \class DrawingWindow
+ *  \brief Fenêtre de dessin.
  *
+ * Bla bla bla
+ */
+
+/*! \typedef DrawingWindow::ThreadFunction
+ *  \brief Type de la fonction de dessin, passée en paramètre de construction.
+ */
+/*! \var DrawingWindow::DEFAULT_WIDTH
+ *  \brief Largeur par défaut de la fenêtre.
+ */
+/*! \var DrawingWindow::DEFAULT_HEIGHT
+ *  \brief Hauteur par défaut de la fenêtre.
+ */
+/*! \var DrawingWindow::width
+ *  \brief Largeur de la fenêtre.
+ */
+/*! \var DrawingWindow::height
+ *  \brief Hauteur de la fenêtre.
+ */
+/*! \var DrawingWindow::paintInterval
+ *  \brief Intervalle de temps entre deux rendus (ms).
+ */
+
+//! Constructeur.
+/*!
  * Construit une nouvelle fenêtre de dessin avec les dimensions
  * passées en paramètres.  La fonction fun sera exécutée dans un
  * nouveau thread.
@@ -80,8 +101,8 @@ DrawingWindow::DrawingWindow(ThreadFunction fun, int width_, int height_)
     initialize(fun);
 }
 
-/*! Constructeur.
- *
+//! Constructeur.
+/*!
  * Construit un nouveau widget de dessin avec les dimensions passées
  * en paramètres.  La fonction fun sera exécutée dans un nouveau
  * thread.
@@ -102,8 +123,8 @@ DrawingWindow::DrawingWindow(QWidget *parent,
     initialize(fun);
 }
 
-/*! Constructeur.
- *
+//! Constructeur.
+/*!
  * Construit un nouveau widget de dessin avec les dimensions passées
  * en paramètres.  La fonction fun sera exécutée dans un nouveau
  * thread.
@@ -125,8 +146,7 @@ DrawingWindow::DrawingWindow(QWidget *parent, Qt::WindowFlags flags,
     initialize(fun);
 }
 
-/*! Destructeur.
- */
+//! Destructeur.
 DrawingWindow::~DrawingWindow()
 {
     delete thread;
@@ -134,8 +154,8 @@ DrawingWindow::~DrawingWindow()
     delete image;
 }
 
-/*! Change la couleur de dessin.
- *
+//! Change la couleur de dessin.
+/*!
  * La couleur est un entier, tel que retourné par getPointColor.
  * Normalement de la forme #00RRGGBB.
  *
@@ -150,8 +170,8 @@ void DrawingWindow::setColor(unsigned int color)
     setColor(QColor::fromRgb(color));
 }
 
-/*! Change la couleur de dessin.
- *
+//! Change la couleur de dessin.
+/*!
  * Le nom de couleur est de la forme "black", "white", "red", "blue", ...
  *
  * \param name          nom de couleur
@@ -165,8 +185,8 @@ void DrawingWindow::setColor(const char *name)
     setColor(QColor(name));
 }
 
-/*! Change la couleur de dessin.
- *
+//! Change la couleur de dessin.
+/*!
  * Les composantes de rouge, vert et bleu de la couleur doivent être
  * compris entre 0 et 1.  Si le trois composantes sont à 0, on obtient
  * du noir; si les trois composantes sont à 1, on obtient du blanc.
@@ -183,8 +203,8 @@ void DrawingWindow::setColor(float red, float green, float blue)
     setColor(QColor::fromRgbF(red, green, blue));
 }
 
-/*! Change la couleur de fond.
- *
+//! Change la couleur de fond.
+/*!
  * \param color         couleur
  *
  * \see setBgColor(const char *), setBgColor(float, float, float),
@@ -197,8 +217,8 @@ void DrawingWindow::setBgColor(unsigned int color)
     setBgColor(QColor::fromRgb(color));
 }
 
-/*! Change la couleur de fond.
- *
+//! Change la couleur de fond.
+/*!
  * \param name          nom de couleur
  *
  * \see setBgColor(unsigned int), setBgColor(float, float, float),
@@ -211,8 +231,8 @@ void DrawingWindow::setBgColor(const char *name)
     setBgColor(QColor(name));
 }
 
-/*! Change la couleur de fond.
- *
+//! Change la couleur de fond.
+/*!
  * \param red           composante de rouge
  * \param green         composante de vert
  * \param blue          composante de bleu
@@ -226,8 +246,8 @@ void DrawingWindow::setBgColor(float red, float green, float blue)
     setBgColor(QColor::fromRgbF(red, green, blue));
 }
 
-/*! Efface la fenêtre.
- *
+//! Efface la fenêtre.
+/*!
  * La fenêtre est effacée avec la couleur de fond courante.
  *
  * \see setBgColor
@@ -240,8 +260,8 @@ void DrawingWindow::clearGraph()
     safeUnlock(imageMutex);
 }
 
-/*! Dessine un point.
- *
+//! Dessine un point.
+/*!
  * Dessine un point (pixel) aux coordonnées (x, y), avec la couleur de
  * dessin courante.
  *
@@ -257,8 +277,8 @@ void DrawingWindow::drawPoint(int x, int y)
     safeUnlock(imageMutex);
 }
 
-/*! Dessine un segment.
- *
+//! Dessine un segment.
+/*!
  * Dessine un segement de droite entre les coordonnées (x1, y1) et
  * (x2, y2), avec la couleur de dessin courante.
  *
@@ -275,8 +295,8 @@ void DrawingWindow::drawLine(int x1, int y1, int x2, int y2)
     safeUnlock(imageMutex);
 }
 
-/*! Dessine un rectangle.
- *
+//! Dessine un rectangle.
+/*!
  * Dessine le rectangle parallèle aux axes et défini par les
  * coordonnées de deux sommets opposés (x1, y1) et (x2, y2).  Utilise
  * la couleur de dessin courante.
@@ -298,8 +318,8 @@ void DrawingWindow::drawRect(int x1, int y1, int x2, int y2)
     safeUnlock(imageMutex);
 }
 
-/*! Dessine un rectangle plein.
- *
+//! Dessine un rectangle plein.
+/*!
  * Dessine le rectangle plein parallèle aux axes et défini par les
  * coordonnées de deux sommets opposés (x1, y1) et (x2, y2).  Utilise
  * la couleur de dessin courante.
@@ -316,8 +336,8 @@ void DrawingWindow::fillRect(int x1, int y1, int x2, int y2)
     painter->setBrush(Qt::NoBrush);
 }
 
-/*! Dessine un cercle.
- *
+//! Dessine un cercle.
+/*!
  * Dessine un cercle de centre (x, y) et de rayon r.  Utilise la
  * couleur de dessin courante.
  *
@@ -337,8 +357,8 @@ void DrawingWindow::drawCircle(int x, int y, int r)
     safeUnlock(imageMutex);
 }
 
-/*! Dessine un disque.
- *
+//! Dessine un disque.
+/*!
  * Dessine un disque (cercle plein) de centre (x, y) et de rayon r.
  * Utilise la couleur de dessin courante.
  *
@@ -354,8 +374,8 @@ void DrawingWindow::fillCircle(int x, int y, int r)
     painter->setBrush(Qt::NoBrush);
 }
 
-/*! Écrit du texte.
- *
+//! Écrit du texte.
+/*!
  * Écrit le texte text, aux coordonnées (x, y) et avec les paramètres
  * d'alignement flags.  Le texte est écrit avec la couleur de dessin
  * courante.  Les flags sont une combinaison (ou binaire) de
@@ -380,8 +400,8 @@ void DrawingWindow::drawText(int x, int y, const char *text, int flags)
     safeUnlock(syncMutex);
 }
 
-/*! Écrit du texte sur fond coloré.
- *
+//! Écrit du texte sur fond coloré.
+/*!
  * Écrit du texte comme drawText, mais l'arrière-plan est coloré avec
  * la couleur de fond courante.
  *
@@ -399,8 +419,8 @@ void DrawingWindow::drawTextBg(int x, int y, const char *text, int flags)
 }
 
 
-/*! Retourne la couleur d'un pixel.
- *
+//! Retourne la couleur d'un pixel.
+/*!
  * Retourne la couleur du pixel de coordonnées (x, y).  La valeur
  * retournée peut servir de paramètres à setColor(unsigned int) ou
  * setBgColor(unsigned int).
@@ -415,8 +435,8 @@ unsigned int DrawingWindow::getPointColor(int x, int y)
     return image->pixel(x, y);
 }
 
-/*! Synchronise le contenu de la fenêtre.
- *
+//! Synchronise le contenu de la fenêtre.
+/*!
  * Pour des raisons d'efficacités, le résultat des fonctions de dessin
  * n'est pas affiché immédiatement.  L'appel à sync permet de
  * synchroniser le contenu de la fenêtre.  Autrement dit, cela bloque
@@ -440,15 +460,14 @@ bool DrawingWindow::sync(unsigned long time)
     return synced;
 }
 
-/*! Ferme la fenêtre graphique.
- */
+//! Ferme la fenêtre graphique.
 void DrawingWindow::closeGraph()
 {
     qApp->postEvent(this, new CloseRequestEvent());
 }
 
-/*! Suspend l'exécution pendant un certain temps.
- *
+//! Suspend l'exécution pendant un certain temps.
+/*!
  * \param secs          temps d'attente en seconde
  */
 void DrawingWindow::sleep(unsigned long secs)
@@ -456,8 +475,8 @@ void DrawingWindow::sleep(unsigned long secs)
     DrawingThread::sleep(secs);
 }
 
-/*! Suspend l'exécution pendant un certain temps.
- *
+//! Suspend l'exécution pendant un certain temps.
+/*!
  * \param msecs          temps d'attente en millisecondes
  */
 void DrawingWindow::msleep(unsigned long msecs)
@@ -465,8 +484,8 @@ void DrawingWindow::msleep(unsigned long msecs)
     DrawingThread::msleep(msecs);
 }
 
-/*! Suspend l'exécution pendant un certain temps.
- *
+//! Suspend l'exécution pendant un certain temps.
+/*!
  * \param usecs          temps d'attente en microsecondes
  */
 void DrawingWindow::usleep(unsigned long usecs)
@@ -474,7 +493,8 @@ void DrawingWindow::usleep(unsigned long usecs)
     DrawingThread::usleep(usecs);
 }
 
-/*! \see QWidget
+/*!
+ * \see QWidget
  */
 void DrawingWindow::closeEvent(QCloseEvent *ev)
 {
@@ -493,7 +513,8 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
     thread->wait();
 }
 
-/*! \see QWidget
+/*!
+ * \see QWidget
  */
 void DrawingWindow::customEvent(QEvent *ev)
 {
@@ -511,7 +532,8 @@ void DrawingWindow::customEvent(QEvent *ev)
     }
 }
 
-/*! \see QWidget
+/*!
+ * \see QWidget
  */
 void DrawingWindow::keyPressEvent(QKeyEvent *ev)
 {
@@ -528,7 +550,8 @@ void DrawingWindow::keyPressEvent(QKeyEvent *ev)
         ev->accept();
 }
 
-/*! \see QWidget
+/*!
+ * \see QWidget
  */
 void DrawingWindow::paintEvent(QPaintEvent *ev)
 {
@@ -540,7 +563,8 @@ void DrawingWindow::paintEvent(QPaintEvent *ev)
     widgetPainter.drawImage(rect, imageCopy, rect);
 }
 
-/*! \see QWidget
+/*!
+ * \see QWidget
  */
 void DrawingWindow::showEvent(QShowEvent *ev)
 {
@@ -551,7 +575,8 @@ void DrawingWindow::showEvent(QShowEvent *ev)
     thread->start_once(QThread::IdlePriority);
 }
 
-/*! \see QWidget
+/*!
+ * \see QWidget
  */
 void DrawingWindow::timerEvent(QTimerEvent *ev)
 {
@@ -565,8 +590,8 @@ void DrawingWindow::timerEvent(QTimerEvent *ev)
 
 //--- DrawingWindow (private methods) ----------------------------------
 
-/*! Fonction d'initialisation.
- *
+//! Fonction d'initialisation.
+/*!
  * Fonction appelée par les différents constructeurs.
  *
  * \param fun           fonction de dessin
@@ -591,8 +616,8 @@ void DrawingWindow::initialize(DrawingWindow::ThreadFunction fun)
     dirtyFlag = false;
 }
 
-/*! Change la couleur de dessin.
- *
+//! Change la couleur de dessin.
+/*!
  * \param color                 couleur
  */
 inline
@@ -603,8 +628,8 @@ void DrawingWindow::setColor(const QColor& color)
     painter->setPen(pen);
 }
 
-/*! Change la couleur de fond.
- *
+//! Change la couleur de fond.
+/*!
  * \param color                 couleur
  */
 inline
@@ -613,8 +638,8 @@ void DrawingWindow::setBgColor(const QColor& color)
     painter->setBackground(color);
 }
 
-/*! Retourne la couleur de dessin courante.
- *
+//! Retourne la couleur de dessin courante.
+/*!
  * \return              couleur de dessin courante
  */
 inline
@@ -623,8 +648,8 @@ QColor DrawingWindow::getColor()
     return painter->pen().color();
 }
 
-/*! Retourne la couleur de fond courante.
- *
+//! Retourne la couleur de fond courante.
+/*!
  * \return              couleur de fond courante
  */
 inline
@@ -633,8 +658,8 @@ QColor DrawingWindow::getBgColor()
     return painter->background().color();
 }
 
-/*! Verrouille un mutex.
- *
+//! Verrouille un mutex.
+/*!
  * S'assure que le thread courant ne peut pas être terminé s'il
  * détient un mutex.  Pendant de safeUnlock.
  *
@@ -650,8 +675,8 @@ void DrawingWindow::safeLock(QMutex &mutex)
     mutex.lock();
 }
 
-/*! Déverrouille un mutex.
- *
+//! Déverrouille un mutex.
+/*!
  * S'assure que le thread courant ne peut pas être terminé s'il
  * détient un mutex.  Pendant de safeLock.
  *
@@ -667,8 +692,7 @@ void DrawingWindow::safeUnlock(QMutex &mutex)
         thread->setTerminationEnabled(true);
 }
 
-/*! Marque l'image entière comme non à jour.
- */
+//! Marque l'image entière comme non à jour.
 inline
 void DrawingWindow::dirty()
 {
@@ -676,8 +700,8 @@ void DrawingWindow::dirty()
     dirtyRect = image->rect();
 }
 
-/*! Marque un point de l'image comme non à jour.
- *
+//! Marque un point de l'image comme non à jour.
+/*!
  * \param x, y          coordonnées du point
  */
 inline
@@ -686,8 +710,8 @@ void DrawingWindow::dirty(int x, int y)
     dirty(QRect(x, y, 1, 1));
 }
 
-/*! Marque une zone de l'image comme non à jour.
- *
+//! Marque une zone de l'image comme non à jour.
+/*!
  * La zone est définie par un rectangle dont les coordonnées de deux
  * sommets oppposés sont données.
  *
@@ -702,8 +726,8 @@ void DrawingWindow::dirty(int x1, int y1, int x2, int y2)
     dirty(r.normalized());
 }
 
-/*! Marque une zone de l'image comme non à jour.
- *
+//! Marque une zone de l'image comme non à jour.
+/*!
  * \param rect          rectangle délimitant la zone
  */
 void DrawingWindow::dirty(const QRect &rect)
@@ -716,8 +740,8 @@ void DrawingWindow::dirty(const QRect &rect)
     }
 }
 
-/*! Génère un update si besoin.
- *
+//! Génère un update si besoin.
+/*!
  * Génère une demande de mise à jour de la fenêtre (appel à update)
  * s'il y en a besoin.
  */
@@ -732,8 +756,8 @@ void DrawingWindow::mayUpdate()
         update(rect);
 }
 
-/*! Fonction bas-niveau pour sync.
- *
+//! Fonction bas-niveau pour sync.
+/*!
  * Fonction de synchronisation dans le thread principal.
  *
  * \see sync, customEvent
@@ -755,8 +779,8 @@ void DrawingWindow::realSync()
     syncMutex.unlock();
 }
 
-/*! Fonction bas-niveau pour drawText.
- *
+//! Fonction bas-niveau pour drawText.
+/*!
  * Le rendu de texte doit être fait dans le thread principal.  D'où
  * les manipulations tordues et la synchronisation qui s'en suit.
  *
@@ -802,8 +826,7 @@ void DrawingWindow::realDrawText(int x, int y, const char *text, int flags)
 
 //--- DrawingThread ----------------------------------------------------
 
-/*! Constructeur.
- */
+//! Constructeur.
 DrawingThread::DrawingThread(DrawingWindow &w, DrawingWindow::ThreadFunction f)
     : drawingWindow(w)
     , threadFunction(f)
@@ -811,8 +834,7 @@ DrawingThread::DrawingThread(DrawingWindow &w, DrawingWindow::ThreadFunction f)
 {
 }
 
-/*! Démarre le thread si ce n'a pas encore été fait.
- */
+//! Démarre le thread si ce n'a pas encore été fait.
 void DrawingThread::start_once(Priority priority)
 {
     if (!started_once) {
@@ -821,8 +843,7 @@ void DrawingThread::start_once(Priority priority)
     }
 }
 
-/*! La vraie fonction pour le thread.
- */
+//! La vraie fonction pour le thread.
 void DrawingThread::run()
 {
     threadFunction(drawingWindow);
