@@ -7,7 +7,7 @@ SRC = DrawingWindow.h DrawingWindow.cpp exemple.cpp exemple.pro
 .PHONY: install
 
 install:
-	install -m 644 $(SRC) $(DEST)
 	doxygen Doxyfile
+	install -m 644 $(SRC) $(DEST)
 	install -m 755 -d $(DEST)/html
 	install -m 644 html/* $(DEST)/html

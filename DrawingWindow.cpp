@@ -4,6 +4,69 @@
 #include <QThread>
 #include <QTimerEvent>
 
+/*! \mainpage
+ *
+ * Bla bla bla...
+ */
+
+/*! \class DrawingWindow
+ *  \brief Fenêtre de dessin.
+ *
+ * \author Arnaud Giersch <arnaud.giersch@iut-bm.univ-fcomte.fr>
+ * \date novenbre 2007
+ *
+ * Cette classe décrit un widget Qt permettant d'écrire des
+ * applications graphiques simples.  Pour cela, il faut définir une
+ * fonction de dessin.  Cette fonction ne retourne rien et prend comme
+ * unique paramètre une référence vers un objet de class
+ * DrawingWindow.
+ *
+ * La fonction devra ensuite être passée en paramètre pour les
+ * constructeurs de la classe, ainsi que les dimension requises pour
+ * la fenêtre graphique.  Le programme est ensuite compilé comme
+ * n'importe programme Qt.
+ *
+ * Concrètement, la fonction sera exécutée dans un nouveau thread,
+ * tandis que le thread principal s'occupera de la gestion des
+ * évènements et du rendu.
+ */
+
+/*! \example hello.cpp
+ *
+ * Voir le code source à la fin de la page.  Pour compiler et exécuter
+ * ce programme, il faut :
+ *
+ * <b>1. Créer le fichier \c hello.pro</b>
+ *
+ * Pour simplifier, ce fichier contient la liste des fichiers sources
+ * composant le programme.
+ *
+ * \include hello.pro
+ *
+ * <b>2. Créer le fichier \c Makefile avec la commande :</b>
+ *
+ * \verbatim qmake-qt4 hello.pro \endverbatim
+ * ou tout simplement :
+ * \verbatim qmake-qt4 \endverbatim
+ *
+ * <b>3. Compiler le programme avec la commande :</b>
+ *
+ * \verbatim make hello \endverbatim
+ * ou tout simplement :
+ * \verbatim make \endverbatim
+ *
+ * <b>4. Exécuter le programme avec la commande :</b>
+ *
+ * \verbatim ./exemple \endverbatim
+ *
+ * <b>Code source de l'exemple</b>
+ */
+
+/*! \example exemple.cpp
+ *
+ * Un exemple un peu plus sophistiqué.
+ */
+
 //! Classe de thread.
 class DrawingThread: public QThread {
 public:
@@ -56,10 +119,8 @@ public:
 
 //--- DrawingWindow ----------------------------------------------------
 
-/*! \class DrawingWindow
- *  \brief Fenêtre de dessin.
- *
- * Bla bla bla
+/*! \file DrawingWindow.h
+ *  \brief Classe DrawingWindow.
  */
 
 /*! \typedef DrawingWindow::ThreadFunction

@@ -10,7 +10,7 @@
  *      |CONFIG += debug                                             |
  *      |HEADERS += DrawingWindow.h                                  |
  *      |SOURCES += DrawingWindow.cpp                                |
- *      |SOURCES += exemple.cc                                       |
+ *      |SOURCES += exemple.cpp                                      |
  *      +------------------------------------------------------------+
  *
  * 2. Créer le fichier Makefile avec la commande :
