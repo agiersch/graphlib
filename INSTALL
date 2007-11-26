@@ -2,7 +2,9 @@
 
 DEST = $(HOME)/CoursInfo/Algo_1A/tp/graph
 
-SRC = DrawingWindow.h DrawingWindow.cpp exemple.cpp exemple.pro
+SRC = DrawingWindow.h DrawingWindow.cpp
+SRC += exemple.cpp exemple.pro
+SRC += index.html
 
 .PHONY: install
 
