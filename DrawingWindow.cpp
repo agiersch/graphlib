@@ -50,6 +50,11 @@
  * la fenêtre graphique.  Le programme est ensuite compilé comme
  * n'importe programme Qt.
  *
+ * <b>NB.</b> Pour toutes les méthodes de dessin, le coin en haut à gauche
+ * de la fenêtre a les coordonnées (0, 0).  Le coin en bas à droite de
+ * la fenêtre a les coordonnées (largeur - 1, hauteur - 1), si la
+ * fenêtre est de dimension largeur × hauteur.
+ *
  * Concrètement, la fonction sera exécutée dans un nouveau thread,
  * tandis que le thread principal s'occupera de la gestion des
  * évènements et du rendu.
