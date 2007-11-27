@@ -22,6 +22,8 @@ const float hauteurMax = 130;
 const float largeurMin = 40;
 const float largeurMax = 150;
 
+const float ventMax = 30;
+
 const float largeurChateau = 8.5;
 const float hauteurChateau = 7;
 
@@ -202,7 +204,7 @@ void initialise(DrawingWindow& w)
 {
     largeurMont = frand(largeurMin, largeurMax);
     hauteurMont = frand(hauteurMin, hauteurMax);
-    wnd = frand(-30, 30);
+    wnd = frand(-ventMax, ventMax);
     w.setBgColor("skyblue");
     w.clearGraph();
     dessineTerrain(w, largeurMont, hauteurMont);
