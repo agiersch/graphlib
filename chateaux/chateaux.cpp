@@ -61,23 +61,23 @@ float deg2rad(float deg)
 // conversion coordonnées réelles -> coordonnées fenêtre
 int rtowX(const DrawingWindow& w, float rx)
 {
-    return (int )roundf(w.width * (rx - rXMin) / (rXMax - rXMin + 1.0));
+    return (int )roundf((w.width - 1) * (rx - rXMin) / (rXMax - rXMin));
 }
 
 int rtowY(const DrawingWindow& w, float ry)
 {
-    return (int )roundf(w.height * (rYMax - ry) / (rYMax - rYMin + 1.0));
+    return (int )roundf((w.height - 1) * (rYMax - ry) / (rYMax - rYMin));
 }
 
-// conversion coordonnées réelles -> coordonnées fenêtre
+// conversion coordonnées fenêtre -> coordonnées réelles
 float wtorX(const DrawingWindow& w, int wx)
 {
-    return (rXMax - rXMin + 1.0) * wx / w.width + rXMin;
+    return (rXMax - rXMin) * wx / (w.width - 1) + rXMin;
 }
 
 float wtorY(const DrawingWindow& w, int wy)
 {
-    return -(rYMax - rYMin + 1.0) * wy / w.height - rYMax;
+    return -(rYMax - rYMin) * wy / (w.height - 1) - rYMax;
 }
 
 float hauteurMontagne(float largeur, float hauteur, float x)

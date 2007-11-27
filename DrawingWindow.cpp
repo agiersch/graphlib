@@ -48,16 +48,25 @@
  * La fonction devra ensuite être passée en paramètre pour les
  * constructeurs de la classe, ainsi que les dimension requises pour
  * la fenêtre graphique.  Le programme est ensuite compilé comme
- * n'importe programme Qt.
+ * n'importe quel programme Qt.
  *
  * Concrètement, la fonction sera exécutée dans un nouveau thread,
  * tandis que le thread principal s'occupera de la gestion des
- * évènements et du rendu.
+ * évènements et du rendu dans la fenêtre.
  *
  * <b>NB.</b> Pour toutes les méthodes de dessin, le coin en haut à gauche
  * de la fenêtre a les coordonnées (0, 0).  Le coin en bas à droite de
  * la fenêtre a les coordonnées (largeur - 1, hauteur - 1), si la
  * fenêtre est de dimension largeur × hauteur.
+ *
+ * Un appui sur la touche <Esc> provoque la fermeture de la fenêtre.
+ * Comme pour la plupart des applications, il est également possible
+ * de fermer la fenêtre via le gestionnaire de fenêtres.
+ *
+ * Il est possible, dans une application, d'ouvrir plusieurs fenêtres,
+ * avec des fonctions de dessin éventuellement différentes.
+ * L'application se terminera normalement lorsque la dernière fenêtre
+ * sera fermée.
  */
 
 /*! \example hello.cpp
