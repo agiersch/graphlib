@@ -42,8 +42,8 @@ float largeurMont;
 float hauteurMont;
 float wnd;
 
-/* Retourne un nombre pseudo-aléatoire compris entre 0 et le paramètre
- * 'max' (exclus)
+/* Retourne un nombre pseudo-aléatoire compris entre le paramètre
+ * 'min' (inclus) et le paramètre 'max' (exclus)
  */
 float frand(float min, float max)
 {
