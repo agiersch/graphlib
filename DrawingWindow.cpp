@@ -59,7 +59,7 @@
  * la fenêtre a les coordonnées (largeur - 1, hauteur - 1), si la
  * fenêtre est de dimension largeur × hauteur.
  *
- * Un appui sur la touche <Esc> provoque la fermeture de la fenêtre.
+ * Un appui sur la touche &lt;Esc&gt; provoque la fermeture de la fenêtre.
  * Comme pour la plupart des applications, il est également possible
  * de fermer la fenêtre via le gestionnaire de fenêtres.
  *

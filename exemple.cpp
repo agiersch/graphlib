@@ -5,7 +5,7 @@
  * 1. Créer le fichier exemple.pro :
  *      +------------------------------------------------------------+
  *      |TEMPLATE = app                                              |
- *      |TARGET = hello                                              |
+ *      |TARGET = exemple                                              |
  *      |CONFIG += qt                                                |
  *      |CONFIG += debug                                             |
  *      |HEADERS += DrawingWindow.h                                  |
