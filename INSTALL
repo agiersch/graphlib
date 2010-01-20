@@ -5,12 +5,13 @@ DEST = $(HOME)/public_html/enseignement/Permanent/AlgoProg/tp/graph
 
 SRC = DrawingWindow.h DrawingWindow.cpp
 SRC += exemple.cpp exemple.pro
-SRC += index.html
+#SRC += index.html
 
 .PHONY: install
 
 install:
 	doxygen Doxyfile
+	rm -fr $(DEST)
 	install -m 755 -d $(DEST)
 	install -m 644 $(SRC) $(DEST)
 	install -m 644 html/* $(DEST)

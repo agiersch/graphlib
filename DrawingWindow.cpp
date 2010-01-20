@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Arnaud Giersch <arnaud.giersch@iut-bm.univ-fcomte.fr>
+ * Copyright (c) 2007-2010, Arnaud Giersch <arnaud.giersch@iut-bm.univ-fcomte.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -542,8 +542,11 @@ unsigned int DrawingWindow::getPointColor(int x, int y)
  *
  * \param x, y          coordonnées du pointeur de souris
  * \param button        numéro du bouton qui a été pressé
+ *                      (1: gauche, 2: droit, 3: milieu, 0 sinon)
  * \param time          durée maximale de l'attente
  * \return              true si un bouton a été pressé
+ *
+ * \bug                 expérimental
  */
 bool DrawingWindow::waitMousePress(int &x, int &y, int &button,
                                    unsigned long time)
@@ -673,6 +676,8 @@ void DrawingWindow::customEvent(QEvent *ev)
 
 /*!
  * \see QWidget
+ *
+ * \bug                 expérimental
  */
 void DrawingWindow::mousePressEvent(QMouseEvent *ev)
 {
