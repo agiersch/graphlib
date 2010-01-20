@@ -1,0 +1,8 @@
+-- Wed, 20 Jan 2010 19:20:49 +0100
+
+        * Added DrawingWindow::waitMousePress().
+        * Added DrawingWindow::mousePressEvent().
+
+-- Tue, 27 Nov 2007 09:31:18 +0100
+
+        * Initial release.
