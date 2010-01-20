@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 
-DEST = $(HOME)/CoursInfo/Algo_S1/tp/graph
+#DEST = $(HOME)/CoursInfo/Algo_S1/tp/graph
+DEST = $(HOME)/public_html/enseignement/Permanent/AlgoProg/tp/graph
 
 SRC = DrawingWindow.h DrawingWindow.cpp
 SRC += exemple.cpp exemple.pro
@@ -12,5 +13,4 @@ install:
 	doxygen Doxyfile
 	install -m 755 -d $(DEST)
 	install -m 644 $(SRC) $(DEST)
-	install -m 755 -d $(DEST)/html
-	install -m 644 html/* $(DEST)/html
+	install -m 644 html/* $(DEST)
