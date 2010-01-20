@@ -37,7 +37,7 @@
  *  \brief Fenêtre de dessin.
  *
  * \author Arnaud Giersch <arnaud.giersch@iut-bm.univ-fcomte.fr>
- * \date novembre 2007
+ * \date 2007-2010
  *
  * Cette classe décrit un widget Qt permettant d'écrire des
  * applications graphiques simples.  Pour cela, il faut définir une
@@ -95,7 +95,7 @@
  *
  * <b>4. Exécuter le programme avec la commande :</b>
  *
- * \verbatim ./exemple \endverbatim
+ * \verbatim ./hello \endverbatim
  *
  * <b>Code source de l'exemple</b>
  */
@@ -534,6 +534,43 @@ unsigned int DrawingWindow::getPointColor(int x, int y)
     return image->pixel(x, y);
 }
 
+//! Attend l'appui sur un des boutons de la souris.
+/*!
+ * Attend l'appui sur un des boutons de la souris.  Retourne le bouton
+ * qui a été pressé et les coordonnées du pointeur de souris à ce
+ * moment-là.
+ *
+ * \param x, y          coordonnées du pointeur de souris
+ * \param button        numéro du bouton qui a été pressé
+ * \param time          durée maximale de l'attente
+ * \return              true si un bouton a été pressé
+ */
+bool DrawingWindow::waitMousePress(int &x, int &y, int &button,
+                                   unsigned long time)
+{
+    bool pressed;
+    safeLock(mouseMutex);
+    if (terminateThread) {
+        pressed = false;
+    } else {
+        pressed = mouseCondition.wait(&mouseMutex, time);
+        if (pressed) {
+            x = mousePos.x();
+            y = mousePos.y();
+            if (mouseButton & Qt::LeftButton)
+                button = 1;
+            else if (mouseButton & Qt::RightButton)
+                button = 2;
+            else if (mouseButton & Qt::MidButton)
+                button = 3;
+            else
+                button = 0;
+        }
+    }
+    safeUnlock(mouseMutex);
+    return pressed;
+}
+
 //! Synchronise le contenu de la fenêtre.
 /*!
  * Pour des raisons d'efficacités, le résultat des fonctions de dessin
@@ -600,6 +637,7 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
     timer.stop();
     thread->terminate();
     syncMutex.lock();
+    mouseMutex.lock();
     terminateThread = true;     // this flag is needed for the case
                                 // where the following wakeAll() call
                                 // occurs between the
@@ -607,6 +645,8 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
                                 // mutex lock in safeLock() called
                                 // from sync()
     syncCondition.wakeAll();
+    mouseCondition.wakeAll();
+    mouseMutex.unlock();
     syncMutex.unlock();
     QWidget::closeEvent(ev);
     thread->wait();
@@ -629,6 +669,19 @@ void DrawingWindow::customEvent(QEvent *ev)
         realDrawText(tev->x, tev->y, tev->text, tev->flags);
         break;
     }
+}
+
+/*!
+ * \see QWidget
+ */
+void DrawingWindow::mousePressEvent(QMouseEvent *ev)
+{
+    mouseMutex.lock();
+    mousePos = ev->pos();
+    mouseButton = ev->button();
+    ev->accept();
+    mouseCondition.wakeAll();
+    mouseMutex.unlock();
 }
 
 /*!

@@ -57,6 +57,8 @@ public:
 
     unsigned int getPointColor(int x, int y);
 
+    bool waitMousePress(int &x, int &y, int &button,
+                        unsigned long time = ULONG_MAX);
     bool sync(unsigned long time = ULONG_MAX);
 
     void closeGraph();
@@ -68,6 +70,7 @@ public:
 protected:
     void closeEvent(QCloseEvent *ev);
     void customEvent(QEvent *ev);
+    void mousePressEvent(QMouseEvent *ev);
     void keyPressEvent(QKeyEvent *ev);
     void paintEvent(QPaintEvent *ev);
     void showEvent(QShowEvent *ev);
@@ -79,6 +82,8 @@ private:
 
     QBasicTimer timer;
     QMutex imageMutex;
+    QMutex mouseMutex;
+    QWaitCondition mouseCondition;
     QMutex syncMutex;
     QWaitCondition syncCondition;
     bool terminateThread;
@@ -86,6 +91,9 @@ private:
 
     QImage *image;
     QPainter *painter;
+
+    QPoint mousePos;
+    Qt::MouseButton mouseButton;
 
     bool dirtyFlag;
     QRect dirtyRect;
