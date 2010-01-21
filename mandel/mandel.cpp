@@ -2,6 +2,8 @@
 #include <QApplication>
 #include <iostream>
 
+// Fonction de dessin de l'ensemble de Madelbrot, dans la zone
+// spécifiée, et avec la précision souhgaitée.
 void do_mandel(DrawingWindow &w,
                double Rmin, double Rmax, double Imin, double Imax,
                int maxiter)
@@ -9,7 +11,7 @@ void do_mandel(DrawingWindow &w,
     int x, y;                   // le pixel considéré
     double cr, ci;              // le complexe correspondant
     double zr, zi;              // pour calculer la suite
-    double zr2, zi2;
+    double zr2, zi2;            // zr^2 et zi^2
     double pr, pi;              // taille d'un pixel
     double rouge, vert, bleu;
     int i;
@@ -21,26 +23,22 @@ void do_mandel(DrawingWindow &w,
     for (x = 0; x < w.width; x++) {
         ci = Imax;
         for (y = 0; y < w.height; y++) {
-            // z_1 = c
-            zr = cr;
-            zi = ci;
-            for (i = 1; i <= maxiter; i++) {
-                zr2 = zr * zr;
-                zi2 = zi * zi;
-                if (zr2 + zi2 >= 4) {
-                    // |z| >= 2 : on sort de la boucle
-                    break;
-                }
+            // z_0 = 0
+            zr = zi = 0.0;
+            zr2 = zi2 = 0.0;
+            for (i = 0; zr2 + zi2 < 4 && i < maxiter; i++) {
                 // on calcule le z suivant
                 zi = 2 * zr * zi + ci;
                 zr = zr2 - zi2 + cr;
+                zr2 = zr * zr;
+                zi2 = zi * zi;
             }
-            if (i > maxiter) {
+            if (i >= maxiter) {
                 rouge = vert = bleu = 0.0;
             } else {
                 // on est sorti trop tôt du for(...): on affiche le
                 // pixel d'un couleur en fonction de i
-                int ii = (maxiter - i) % 96;
+                int ii = (maxiter - 1 - i) % 96;
                 if (ii < 32) {
                     // vert -> bleu
                     bleu = ii / 32.0;
@@ -67,6 +65,8 @@ void do_mandel(DrawingWindow &w,
     }
 }
 
+// Fonction de dessin principale, calcule la zone d'intérêt, appelle
+// do_mandel(), pour dessiner l'ensemle, et permet le zoom.
 void mandel(DrawingWindow &w)
 {
     // nombre max d'itérations
