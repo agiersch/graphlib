@@ -79,7 +79,7 @@ float wtorX(const DrawingWindow& w, int wx)
 
 float wtorY(const DrawingWindow& w, int wy)
 {
-    return -(rYMax - rYMin) * wy / (w.height - 1) - rYMax;
+    return -(rYMax - rYMin) * wy / (w.height - 1) + rYMax;
 }
 
 float hauteurMontagne(float largeur, float hauteur, float x)
