@@ -15,3 +15,4 @@ install:
 	install -m 755 -d $(DEST)
 	install -m 644 $(SRC) $(DEST)
 	install -m 644 html/* $(DEST)
+	install -m 644 htaccess $(DEST)/.htaccess
