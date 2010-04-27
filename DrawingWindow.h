@@ -63,9 +63,9 @@ public:
 
     void closeGraph();
 
-    void sleep(unsigned long secs);
-    void msleep(unsigned long msecs);
-    void usleep(unsigned long usecs);
+    static void sleep(unsigned long secs);
+    static void msleep(unsigned long msecs);
+    static void usleep(unsigned long usecs);
 
 protected:
     void closeEvent(QCloseEvent *ev);

@@ -1,0 +1,47 @@
+/*! \mainpage Petite bibliothèque graphique
+ *
+ * Voici quelques lignes de codes devant permettre d'écrire de manière
+ * assez simples des petites applications graphiques en C++.  Le code
+ * s'appuie sur la bibliothèque <a
+ * href="http://trolltech.com/products/qt">Qt</a>.
+ *
+ * Voir la documentation et les exemples fournis pour en comprendre
+ * l'utilisation.
+ *
+ * \section Documentation
+ *
+ * La documentation se trouve \link DrawingWindow par ici\endlink...
+ * Des exemples d'utilisation sont <a href="./examples.html">par
+ * là</a>.
+ *
+ * \section Télécharger
+ *
+ * Le code source...
+ * <ul>
+ * <li> <a href="DrawingWindow.h"><tt>DrawingWindow.h</tt></a>
+ * <li> <a href="DrawingWindow.cpp"><tt>DrawingWindow.cpp</tt></a>
+ * </ul>
+ *
+ * Un exemple d'utilisation...
+ * <ul>
+ * <li> <a href="exemple.cpp"><tt>exemple.cpp</tt></a>
+ * <li> <a href="exemple.pro"><tt>exemple.pro</tt></a>
+ * </ul>
+ *
+ * \section Contacts
+ *
+ * Tous commentaires, suggestions, rapports de bugs, etc. peuvent
+ * m'être envoyés à l'adresse &lt;arnaud.giersch@iut-bm.univ-fcomte.fr&gt;.
+ *
+ * \section Modifications
+ *
+ * \verbinclude CHANGES
+ *
+ * \section Copyright
+ *
+ * \verbinclude COPYRIGHT
+ */
+
+// Local variables:
+// mode: c++
+// End:

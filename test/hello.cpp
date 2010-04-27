@@ -2,14 +2,14 @@
  * Pour compiler
  * =============
  *
- * 1. Créer le fichier hello.pro :
+ * 1. CrÃ©er le fichier hello.pro :
  *      +------------------------------------------------------------+
  *      |TARGET = hello                                              |
  *      |CONFIG += qt debug                                          |
  *      |SOURCES += hello.cc                                         |
  *      +------------------------------------------------------------+
  *
- * 2. Créer le fichier Makefile avec la commande :
+ * 2. CrÃ©er le fichier Makefile avec la commande :
  *      $ qmake -makefile hello.pro
  *    ou tout simplement :
  *      $ qmake -makefile
@@ -50,7 +50,7 @@ void flip(DrawingWindow &w)
 
 void mandel(DrawingWindow &w)
 {
-    /* paramètres par défaut */
+    /* paramÃ¨tres par dÃ©faut */
     int larg = w.width;
     int haut = w.height;
     float Rmin = -2.05;
@@ -60,7 +60,7 @@ void mandel(DrawingWindow &w)
 
     int maxiter = 100;
 
-    int x, y;                   /* le pixel considéré */
+    int x, y;                   /* le pixel considÃ©rÃ© */
     float cr, ci;               /* le complexe correspondant */
     float zr, zi;               /* pour calculer la suite */
     float zr2, zi2;
@@ -89,7 +89,7 @@ void mandel(DrawingWindow &w)
                 zi = 2*zr*zi + ci;
                 zr = zr2 - zi2 + cr;
             }
-                /* on est sorti trop tôt du for(...):
+                /* on est sorti trop tÃ´t du for(...):
                    on affiche le pixel d'un couleur en fonction 
                    de i */
                  if (i <= maxiter / 2) {

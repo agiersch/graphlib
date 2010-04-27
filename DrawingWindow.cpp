@@ -34,54 +34,54 @@
 #include <QTimerEvent>
 
 /*! \class DrawingWindow
- *  \brief Fenêtre de dessin.
+ *  \brief FenÃªtre de dessin.
  *
  * \author Arnaud Giersch <arnaud.giersch@iut-bm.univ-fcomte.fr>
  * \date 2007-2010
  *
- * Cette classe décrit un widget Qt permettant d'écrire des
- * applications graphiques simples.  Pour cela, il faut définir une
+ * Cette classe dÃ©crit un widget Qt permettant d'Ã©crire des
+ * applications graphiques simples.  Pour cela, il faut dÃ©finir une
  * fonction de dessin.  Cette fonction ne retourne rien et prend comme
- * unique paramètre une référence vers un objet de class
+ * unique paramÃ¨tre une rÃ©fÃ©rence vers un objet de class
  * DrawingWindow.
  *
- * La fonction devra ensuite être passée en paramètre pour les
+ * La fonction devra ensuite Ãªtre passÃ©e en paramÃ¨tre pour les
  * constructeurs de la classe, ainsi que les dimension requises pour
- * la fenêtre graphique.  Le programme est ensuite compilé comme
+ * la fenÃªtre graphique.  Le programme est ensuite compilÃ© comme
  * n'importe quel programme Qt.
  *
- * Concrètement, la fonction sera exécutée dans un nouveau thread,
+ * ConcrÃ¨tement, la fonction sera exÃ©cutÃ©e dans un nouveau thread,
  * tandis que le thread principal s'occupera de la gestion des
- * évènements et du rendu dans la fenêtre.
+ * Ã©vÃ¨nements et du rendu dans la fenÃªtre.
  *
- * <b>NB.</b> Pour toutes les méthodes de dessin, le coin en haut à gauche
- * de la fenêtre a les coordonnées (0, 0).  Le coin en bas à droite de
- * la fenêtre a les coordonnées (largeur - 1, hauteur - 1), si la
- * fenêtre est de dimension largeur × hauteur.
+ * <b>NB.</b> Pour toutes les mÃ©thodes de dessin, le coin en haut Ã  gauche
+ * de la fenÃªtre a les coordonnÃ©es (0, 0).  Le coin en bas Ã  droite de
+ * la fenÃªtre a les coordonnÃ©es (largeur - 1, hauteur - 1), si la
+ * fenÃªtre est de dimension largeur Ã— hauteur.
  *
- * Un appui sur la touche &lt;Esc&gt; provoque la fermeture de la fenêtre.
- * Comme pour la plupart des applications, il est également possible
- * de fermer la fenêtre via le gestionnaire de fenêtres.
+ * Un appui sur la touche &lt;Esc&gt; provoque la fermeture de la fenÃªtre.
+ * Comme pour la plupart des applications, il est Ã©galement possible
+ * de fermer la fenÃªtre via le gestionnaire de fenÃªtres.
  *
- * Il est possible, dans une application, d'ouvrir plusieurs fenêtres,
- * avec des fonctions de dessin éventuellement différentes.
- * L'application se terminera normalement lorsque la dernière fenêtre
- * sera fermée.
+ * Il est possible, dans une application, d'ouvrir plusieurs fenÃªtres,
+ * avec des fonctions de dessin Ã©ventuellement diffÃ©rentes.
+ * L'application se terminera normalement lorsque la derniÃ¨re fenÃªtre
+ * sera fermÃ©e.
  */
 
 /*! \example hello.cpp
  *
- * Voir le code source à la fin de la page.  Pour compiler et exécuter
+ * Voir le code source Ã  la fin de la page.  Pour compiler et exÃ©cuter
  * ce programme, il faut :
  *
- * <b>1. Créer le fichier \c hello.pro</b>
+ * <b>1. CrÃ©er le fichier \c hello.pro</b>
  *
  * Pour simplifier, ce fichier contient la liste des fichiers sources
  * composant le programme.
  *
  * \include hello.pro
  *
- * <b>2. Créer le fichier \c Makefile avec la commande :</b>
+ * <b>2. CrÃ©er le fichier \c Makefile avec la commande :</b>
  *
  * \verbatim qmake-qt4 hello.pro \endverbatim
  * ou tout simplement :
@@ -93,7 +93,7 @@
  * ou tout simplement :
  * \verbatim make \endverbatim
  *
- * <b>4. Exécuter le programme avec la commande :</b>
+ * <b>4. ExÃ©cuter le programme avec la commande :</b>
  *
  * \verbatim ./hello \endverbatim
  *
@@ -102,7 +102,7 @@
 
 /*! \example exemple.cpp
  *
- * Un exemple un peu plus sophistiqué.
+ * Un exemple un peu plus sophistiquÃ©.
  */
 
 //! Classe de thread.
@@ -124,8 +124,8 @@ private:
 
 enum UserEvents {
     SyncRequest = QEvent::User, //!< Demande de synchronisation.
-    CloseRequest,               //!< Demande de fermeture de la fenêtre.
-    DrawTextRequest,            //!< Demande d'écriture de texte.
+    CloseRequest,               //!< Demande de fermeture de la fenÃªtre.
+    DrawTextRequest,            //!< Demande d'Ã©criture de texte.
 };
 
 //! Demande de synchronisation.
@@ -135,14 +135,14 @@ public:
     { }
 };
 
-//! Demande de fermeture de fenêtre.
+//! Demande de fermeture de fenÃªtre.
 class CloseRequestEvent: public QEvent {
 public:
     CloseRequestEvent(): QEvent(static_cast<QEvent::Type>(CloseRequest))
     { }
 };
 
-//! Demande de tracé de texte. 
+//! Demande de tracÃ© de texte. 
 class DrawTextEvent: public QEvent {
 public:
     const int x;
@@ -162,19 +162,19 @@ public:
  */
 
 /*! \typedef DrawingWindow::ThreadFunction
- *  \brief Type de la fonction de dessin, passée en paramètre de construction.
+ *  \brief Type de la fonction de dessin, passÃ©e en paramÃ¨tre de construction.
  */
 /*! \var DrawingWindow::DEFAULT_WIDTH
- *  \brief Largeur par défaut de la fenêtre.
+ *  \brief Largeur par dÃ©faut de la fenÃªtre.
  */
 /*! \var DrawingWindow::DEFAULT_HEIGHT
- *  \brief Hauteur par défaut de la fenêtre.
+ *  \brief Hauteur par dÃ©faut de la fenÃªtre.
  */
 /*! \var DrawingWindow::width
- *  \brief Largeur de la fenêtre.
+ *  \brief Largeur de la fenÃªtre.
  */
 /*! \var DrawingWindow::height
- *  \brief Hauteur de la fenêtre.
+ *  \brief Hauteur de la fenÃªtre.
  */
 /*! \var DrawingWindow::paintInterval
  *  \brief Intervalle de temps entre deux rendus (ms).
@@ -182,13 +182,13 @@ public:
 
 //! Constructeur.
 /*!
- * Construit une nouvelle fenêtre de dessin avec les dimensions
- * passées en paramètres.  La fonction fun sera exécutée dans un
+ * Construit une nouvelle fenÃªtre de dessin avec les dimensions
+ * passÃ©es en paramÃ¨tres.  La fonction fun sera exÃ©cutÃ©e dans un
  * nouveau thread.
  *
  * \param fun           fonction de dessin
- * \param width_        largeur de la fenêtre
- * \param height_       hauteur de la fenêtre
+ * \param width_        largeur de la fenÃªtre
+ * \param height_       hauteur de la fenÃªtre
  *
  * \see QWidget
  */
@@ -202,14 +202,14 @@ DrawingWindow::DrawingWindow(ThreadFunction fun, int width_, int height_)
 
 //! Constructeur.
 /*!
- * Construit un nouveau widget de dessin avec les dimensions passées
- * en paramètres.  La fonction fun sera exécutée dans un nouveau
+ * Construit un nouveau widget de dessin avec les dimensions passÃ©es
+ * en paramÃ¨tres.  La fonction fun sera exÃ©cutÃ©e dans un nouveau
  * thread.
  *
  * \param parent        widget parent
  * \param fun           fonction de dessin
- * \param width_        largeur de la fenêtre
- * \param height_       hauteur de la fenêtre
+ * \param width_        largeur de la fenÃªtre
+ * \param height_       hauteur de la fenÃªtre
  *
  * \see QWidget
  */
@@ -224,15 +224,15 @@ DrawingWindow::DrawingWindow(QWidget *parent,
 
 //! Constructeur.
 /*!
- * Construit un nouveau widget de dessin avec les dimensions passées
- * en paramètres.  La fonction fun sera exécutée dans un nouveau
+ * Construit un nouveau widget de dessin avec les dimensions passÃ©es
+ * en paramÃ¨tres.  La fonction fun sera exÃ©cutÃ©e dans un nouveau
  * thread.
  *
  * \param parent        widget parent
- * \param flags         flags passés au constructeur de QWidget
+ * \param flags         flags passÃ©s au constructeur de QWidget
  * \param fun           fonction de dessin
- * \param width_        largeur de la fenêtre
- * \param height_       hauteur de la fenêtre
+ * \param width_        largeur de la fenÃªtre
+ * \param height_       hauteur de la fenÃªtre
  *
  * \see QWidget
  */
@@ -255,7 +255,7 @@ DrawingWindow::~DrawingWindow()
 
 //! Change la couleur de dessin.
 /*!
- * La couleur est un entier, tel que retourné par getPointColor.
+ * La couleur est un entier, tel que retournÃ© par getPointColor.
  * Normalement de la forme #00RRGGBB.
  *
  * \param color         couleur
@@ -286,9 +286,9 @@ void DrawingWindow::setColor(const char *name)
 
 //! Change la couleur de dessin.
 /*!
- * Les composantes de rouge, vert et bleu de la couleur doivent être
- * compris entre 0 et 1.  Si le trois composantes sont à 0, on obtient
- * du noir; si les trois composantes sont à 1, on obtient du blanc.
+ * Les composantes de rouge, vert et bleu de la couleur doivent Ãªtre
+ * compris entre 0 et 1.  Si le trois composantes sont Ã  0, on obtient
+ * du noir; si les trois composantes sont Ã  1, on obtient du blanc.
  *
  * \param red           composante de rouge
  * \param green         composante de vert
@@ -345,9 +345,9 @@ void DrawingWindow::setBgColor(float red, float green, float blue)
     setBgColor(QColor::fromRgbF(red, green, blue));
 }
 
-//! Efface la fenêtre.
+//! Efface la fenÃªtre.
 /*!
- * La fenêtre est effacée avec la couleur de fond courante.
+ * La fenÃªtre est effacÃ©e avec la couleur de fond courante.
  *
  * \see setBgColor
  */
@@ -361,10 +361,10 @@ void DrawingWindow::clearGraph()
 
 //! Dessine un point.
 /*!
- * Dessine un point (pixel) aux coordonnées (x, y), avec la couleur de
+ * Dessine un point (pixel) aux coordonnÃ©es (x, y), avec la couleur de
  * dessin courante.
  *
- * \param x, y          coordonnées du point
+ * \param x, y          coordonnÃ©es du point
  *
  * \see setColor
  */
@@ -378,11 +378,11 @@ void DrawingWindow::drawPoint(int x, int y)
 
 //! Dessine un segment.
 /*!
- * Dessine un segement de droite entre les coordonnées (x1, y1) et
+ * Dessine un segement de droite entre les coordonnÃ©es (x1, y1) et
  * (x2, y2), avec la couleur de dessin courante.
  *
- * \param x1, y1        coordonnées d'une extrémité du segment
- * \param x2, y2        coordonnées de l'autre extrémité du segment
+ * \param x1, y1        coordonnÃ©es d'une extrÃ©mitÃ© du segment
+ * \param x2, y2        coordonnÃ©es de l'autre extrÃ©mitÃ© du segment
  *
  * \see setColor
  */
@@ -396,12 +396,12 @@ void DrawingWindow::drawLine(int x1, int y1, int x2, int y2)
 
 //! Dessine un rectangle.
 /*!
- * Dessine le rectangle parallèle aux axes et défini par les
- * coordonnées de deux sommets opposés (x1, y1) et (x2, y2).  Utilise
+ * Dessine le rectangle parallÃ¨le aux axes et dÃ©fini par les
+ * coordonnÃ©es de deux sommets opposÃ©s (x1, y1) et (x2, y2).  Utilise
  * la couleur de dessin courante.
  *
- * \param x1, y1        coordonnées d'un sommet du rectangle
- * \param x2, y2        coordonnées du sommet opposé du rectangle
+ * \param x1, y1        coordonnÃ©es d'un sommet du rectangle
+ * \param x2, y2        coordonnÃ©es du sommet opposÃ© du rectangle
  *
  * \see fillRect, setColor
  */
@@ -419,12 +419,12 @@ void DrawingWindow::drawRect(int x1, int y1, int x2, int y2)
 
 //! Dessine un rectangle plein.
 /*!
- * Dessine le rectangle plein parallèle aux axes et défini par les
- * coordonnées de deux sommets opposés (x1, y1) et (x2, y2).  Utilise
+ * Dessine le rectangle plein parallÃ¨le aux axes et dÃ©fini par les
+ * coordonnÃ©es de deux sommets opposÃ©s (x1, y1) et (x2, y2).  Utilise
  * la couleur de dessin courante.
  *
- * \param x1, y1        coordonnées d'un sommet du rectangle
- * \param x2, y2        coordonnées du sommet opposé du rectangle
+ * \param x1, y1        coordonnÃ©es d'un sommet du rectangle
+ * \param x2, y2        coordonnÃ©es du sommet opposÃ© du rectangle
  *
  * \see drawRect, setColor
  */
@@ -440,7 +440,7 @@ void DrawingWindow::fillRect(int x1, int y1, int x2, int y2)
  * Dessine un cercle de centre (x, y) et de rayon r.  Utilise la
  * couleur de dessin courante.
  *
- * \param x, y          coordonnées du centre du cercle
+ * \param x, y          coordonnÃ©es du centre du cercle
  * \param r             rayon du cercle
  *
  * \see fillCircle, setColor
@@ -461,7 +461,7 @@ void DrawingWindow::drawCircle(int x, int y, int r)
  * Dessine un disque (cercle plein) de centre (x, y) et de rayon r.
  * Utilise la couleur de dessin courante.
  *
- * \param x, y          coordonnées du centre du disque
+ * \param x, y          coordonnÃ©es du centre du disque
  * \param r             rayon du disque
  *
  * \see drawCircle, setColor
@@ -473,18 +473,18 @@ void DrawingWindow::fillCircle(int x, int y, int r)
     painter->setBrush(Qt::NoBrush);
 }
 
-//! Écrit du texte.
+//! Ã‰crit du texte.
 /*!
- * Écrit le texte text, aux coordonnées (x, y) et avec les paramètres
- * d'alignement flags.  Le texte est écrit avec la couleur de dessin
+ * Ã‰crit le texte text, aux coordonnÃ©es (x, y) et avec les paramÃ¨tres
+ * d'alignement flags.  Le texte est Ã©crit avec la couleur de dessin
  * courante.  Les flags sont une combinaison (ou binaire) de
  * Qt::AlignLeft, Qt::AligneRight, Qt::AlignHCenter, Qt::AlignTop,
- * Qt::AlignBottom, Qt::AlignVCenter, Qt::AlignCenter.  Par défaut, le
- * texte est aligné en haut à gauche.
+ * Qt::AlignBottom, Qt::AlignVCenter, Qt::AlignCenter.  Par dÃ©faut, le
+ * texte est alignÃ© en haut Ã  gauche.
  *
- * \param x, y          coordonnées du texte
- * \param text          texte à écrire
- * \param flags         paramètres d'alignement
+ * \param x, y          coordonnÃ©es du texte
+ * \param text          texte Ã  Ã©crire
+ * \param flags         paramÃ¨tres d'alignement
  *
  * \see drawTextBg, setColor
  * \see QPainter::drawText
@@ -499,14 +499,14 @@ void DrawingWindow::drawText(int x, int y, const char *text, int flags)
     safeUnlock(syncMutex);
 }
 
-//! Écrit du texte sur fond coloré.
+//! Ã‰crit du texte sur fond colorÃ©.
 /*!
- * Écrit du texte comme drawText, mais l'arrière-plan est coloré avec
+ * Ã‰crit du texte comme drawText, mais l'arriÃ¨re-plan est colorÃ© avec
  * la couleur de fond courante.
  *
- * \param x, y          coordonnées du texte
- * \param text          texte à écrire
- * \param flags         paramètres d'alignement
+ * \param x, y          coordonnÃ©es du texte
+ * \param text          texte Ã  Ã©crire
+ * \param flags         paramÃ¨tres d'alignement
  *
  * \see drawText, setColor, setColorBg
  */
@@ -520,11 +520,11 @@ void DrawingWindow::drawTextBg(int x, int y, const char *text, int flags)
 
 //! Retourne la couleur d'un pixel.
 /*!
- * Retourne la couleur du pixel de coordonnées (x, y).  La valeur
- * retournée peut servir de paramètres à setColor(unsigned int) ou
+ * Retourne la couleur du pixel de coordonnÃ©es (x, y).  La valeur
+ * retournÃ©e peut servir de paramÃ¨tres Ã  setColor(unsigned int) ou
  * setBgColor(unsigned int).
  *
- * \param x, y          coordonnées du pixel
+ * \param x, y          coordonnÃ©es du pixel
  * \return              couleur du pixel
  *
  * \see setColor(unsigned int), setBgColor(unsigned int)
@@ -537,16 +537,16 @@ unsigned int DrawingWindow::getPointColor(int x, int y)
 //! Attend l'appui sur un des boutons de la souris.
 /*!
  * Attend l'appui sur un des boutons de la souris.  Retourne le bouton
- * qui a été pressé et les coordonnées du pointeur de souris à ce
- * moment-là.
+ * qui a Ã©tÃ© pressÃ© et les coordonnÃ©es du pointeur de souris Ã  ce
+ * moment-lÃ .
  *
- * \param x, y          coordonnées du pointeur de souris
- * \param button        numéro du bouton qui a été pressé
+ * \param x, y          coordonnÃ©es du pointeur de souris
+ * \param button        numÃ©ro du bouton qui a Ã©tÃ© pressÃ©
  *                      (1: gauche, 2: droit, 3: milieu, 0 sinon)
- * \param time          durée maximale de l'attente
- * \return              true si un bouton a été pressé
+ * \param time          durÃ©e maximale de l'attente
+ * \return              true si un bouton a Ã©tÃ© pressÃ©
  *
- * \bug                 expérimental
+ * \bug                 expÃ©rimental
  */
 bool DrawingWindow::waitMousePress(int &x, int &y, int &button,
                                    unsigned long time)
@@ -574,16 +574,16 @@ bool DrawingWindow::waitMousePress(int &x, int &y, int &button,
     return pressed;
 }
 
-//! Synchronise le contenu de la fenêtre.
+//! Synchronise le contenu de la fenÃªtre.
 /*!
- * Pour des raisons d'efficacités, le résultat des fonctions de dessin
- * n'est pas affiché immédiatement.  L'appel à sync permet de
- * synchroniser le contenu de la fenêtre.  Autrement dit, cela bloque
- * l'exécution du programme jusqu'à ce que le contenu de la fenêtre
- * soit à jour.
+ * Pour des raisons d'efficacitÃ©s, le rÃ©sultat des fonctions de dessin
+ * n'est pas affichÃ© immÃ©diatement.  L'appel Ã  sync permet de
+ * synchroniser le contenu de la fenÃªtre.  Autrement dit, cela bloque
+ * l'exÃ©cution du programme jusqu'Ã  ce que le contenu de la fenÃªtre
+ * soit Ã  jour.
  *
- * \param time          durée maximale de l'attente
- * \return              true si la fenêtre a pu être synchronisée
+ * \param time          durÃ©e maximale de l'attente
+ * \return              true si la fenÃªtre a pu Ãªtre synchronisÃ©e
  */
 bool DrawingWindow::sync(unsigned long time)
 {
@@ -599,13 +599,13 @@ bool DrawingWindow::sync(unsigned long time)
     return synced;
 }
 
-//! Ferme la fenêtre graphique.
+//! Ferme la fenÃªtre graphique.
 void DrawingWindow::closeGraph()
 {
     qApp->postEvent(this, new CloseRequestEvent());
 }
 
-//! Suspend l'exécution pendant un certain temps.
+//! Suspend l'exÃ©cution pendant un certain temps.
 /*!
  * \param secs          temps d'attente en seconde
  */
@@ -614,7 +614,7 @@ void DrawingWindow::sleep(unsigned long secs)
     DrawingThread::sleep(secs);
 }
 
-//! Suspend l'exécution pendant un certain temps.
+//! Suspend l'exÃ©cution pendant un certain temps.
 /*!
  * \param msecs          temps d'attente en millisecondes
  */
@@ -623,7 +623,7 @@ void DrawingWindow::msleep(unsigned long msecs)
     DrawingThread::msleep(msecs);
 }
 
-//! Suspend l'exécution pendant un certain temps.
+//! Suspend l'exÃ©cution pendant un certain temps.
 /*!
  * \param usecs          temps d'attente en microsecondes
  */
@@ -677,7 +677,7 @@ void DrawingWindow::customEvent(QEvent *ev)
 /*!
  * \see QWidget
  *
- * \bug                 expérimental
+ * \bug                 expÃ©rimental
  */
 void DrawingWindow::mousePressEvent(QMouseEvent *ev)
 {
@@ -749,7 +749,7 @@ void DrawingWindow::timerEvent(QTimerEvent *ev)
 
 //! Fonction d'initialisation.
 /*!
- * Fonction appelée par les différents constructeurs.
+ * Fonction appelÃ©e par les diffÃ©rents constructeurs.
  *
  * \param fun           fonction de dessin
  */
@@ -817,10 +817,10 @@ QColor DrawingWindow::getBgColor()
 
 //! Verrouille un mutex.
 /*!
- * S'assure que le thread courant ne peut pas être terminé s'il
- * détient un mutex.  Pendant de safeUnlock.
+ * S'assure que le thread courant ne peut pas Ãªtre terminÃ© s'il
+ * dÃ©tient un mutex.  Pendant de safeUnlock.
  *
- * \param mutex         le mutex à verrouiller
+ * \param mutex         le mutex Ã  verrouiller
  *
  * \see safeUnlock
  */
@@ -832,12 +832,12 @@ void DrawingWindow::safeLock(QMutex &mutex)
     mutex.lock();
 }
 
-//! Déverrouille un mutex.
+//! DÃ©verrouille un mutex.
 /*!
- * S'assure que le thread courant ne peut pas être terminé s'il
- * détient un mutex.  Pendant de safeLock.
+ * S'assure que le thread courant ne peut pas Ãªtre terminÃ© s'il
+ * dÃ©tient un mutex.  Pendant de safeLock.
  *
- * \param mutex         le mutex à déverrouiller
+ * \param mutex         le mutex Ã  dÃ©verrouiller
  *
  * \see safeLock
  */
@@ -849,7 +849,7 @@ void DrawingWindow::safeUnlock(QMutex &mutex)
         thread->setTerminationEnabled(true);
 }
 
-//! Marque l'image entière comme non à jour.
+//! Marque l'image entiÃ¨re comme non Ã  jour.
 inline
 void DrawingWindow::dirty()
 {
@@ -857,9 +857,9 @@ void DrawingWindow::dirty()
     dirtyRect = image->rect();
 }
 
-//! Marque un point de l'image comme non à jour.
+//! Marque un point de l'image comme non Ã  jour.
 /*!
- * \param x, y          coordonnées du point
+ * \param x, y          coordonnÃ©es du point
  */
 inline
 void DrawingWindow::dirty(int x, int y)
@@ -867,13 +867,13 @@ void DrawingWindow::dirty(int x, int y)
     dirty(QRect(x, y, 1, 1));
 }
 
-//! Marque une zone de l'image comme non à jour.
+//! Marque une zone de l'image comme non Ã  jour.
 /*!
- * La zone est définie par un rectangle dont les coordonnées de deux
- * sommets oppposés sont données.
+ * La zone est dÃ©finie par un rectangle dont les coordonnÃ©es de deux
+ * sommets oppposÃ©s sont donnÃ©es.
  *
- * \param x1, y1        coordonnées d'un sommet du rectangle
- * \param x2, y2        coordonnées du sommet opposé du rectangle
+ * \param x1, y1        coordonnÃ©es d'un sommet du rectangle
+ * \param x2, y2        coordonnÃ©es du sommet opposÃ© du rectangle
  */
 inline
 void DrawingWindow::dirty(int x1, int y1, int x2, int y2)
@@ -883,9 +883,9 @@ void DrawingWindow::dirty(int x1, int y1, int x2, int y2)
     dirty(r.normalized());
 }
 
-//! Marque une zone de l'image comme non à jour.
+//! Marque une zone de l'image comme non Ã  jour.
 /*!
- * \param rect          rectangle délimitant la zone
+ * \param rect          rectangle dÃ©limitant la zone
  */
 void DrawingWindow::dirty(const QRect &rect)
 {
@@ -897,9 +897,9 @@ void DrawingWindow::dirty(const QRect &rect)
     }
 }
 
-//! Génère un update si besoin.
+//! GÃ©nÃ¨re un update si besoin.
 /*!
- * Génère une demande de mise à jour de la fenêtre (appel à update)
+ * GÃ©nÃ¨re une demande de mise Ã  jour de la fenÃªtre (appel Ã  update)
  * s'il y en a besoin.
  */
 void DrawingWindow::mayUpdate()
@@ -938,7 +938,7 @@ void DrawingWindow::realSync()
 
 //! Fonction bas-niveau pour drawText.
 /*!
- * Le rendu de texte doit être fait dans le thread principal.  D'où
+ * Le rendu de texte doit Ãªtre fait dans le thread principal.  D'oÃ¹
  * les manipulations tordues et la synchronisation qui s'en suit.
  *
  * \param x, y, text, flags     cf. drawText
@@ -991,7 +991,7 @@ DrawingThread::DrawingThread(DrawingWindow &w, DrawingWindow::ThreadFunction f)
 {
 }
 
-//! Démarre le thread si ce n'a pas encore été fait.
+//! DÃ©marre le thread si ce n'a pas encore Ã©tÃ© fait.
 void DrawingThread::start_once(Priority priority)
 {
     if (!started_once) {

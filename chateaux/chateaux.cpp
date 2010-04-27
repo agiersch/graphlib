@@ -6,8 +6,8 @@
 #include <cstdlib>
 #include <sstream>
 
-/* Note : les coordonnÈes rÈelles vont de -100 ‡ +100 en abscisse, et
- *  de -10 ‡ +140 en ordonnÈe
+/* Note : les coordonn√©es r√©elles vont de -100 √† +100 en abscisse, et
+ *  de -10 √† +140 en ordonn√©e
  */
 
 const float PI = 4.0 * atan(1.0);
@@ -42,8 +42,8 @@ float largeurMont;
 float hauteurMont;
 float wnd;
 
-/* Retourne un nombre pseudo-alÈatoire compris entre le paramËtre
- * 'min' (inclus) et le paramËtre 'max' (exclus)
+/* Retourne un nombre pseudo-al√©atoire compris entre le param√®tre
+ * 'min' (inclus) et le param√®tre 'max' (exclus)
  */
 float frand(float min, float max)
 {
@@ -60,7 +60,7 @@ float deg2rad(float deg)
     return deg * PI / 180.0;
 }
 
-// conversion coordonnÈes rÈelles -> coordonnÈes fenÍtre
+// conversion coordonn√©es r√©elles -> coordonn√©es fen√™tre
 int rtowX(const DrawingWindow& w, float rx)
 {
     return (int )roundf((w.width - 1) * (rx - rXMin) / (rXMax - rXMin));
@@ -71,7 +71,7 @@ int rtowY(const DrawingWindow& w, float ry)
     return (int )roundf((w.height - 1) * (rYMax - ry) / (rYMax - rYMin));
 }
 
-// conversion coordonnÈes fenÍtre -> coordonnÈes rÈelles
+// conversion coordonn√©es fen√™tre -> coordonn√©es r√©elles
 float wtorX(const DrawingWindow& w, int wx)
 {
     return (rXMax - rXMin) * wx / (w.width - 1) + rXMin;
@@ -222,8 +222,8 @@ void initialise(DrawingWindow& w)
                Qt::AlignHCenter);
 }
 
-/* Retour : numÈro du perdant, 0 sinon
-   x et y contiennent les coordonnÈes de la collision
+/* Retour : num√©ro du perdant, 0 sinon
+   x et y contiennent les coordonn√©es de la collision
 */
 int tir(DrawingWindow& w,
         float x0, float y0, float v0, float alpha, float& x, float &y)
@@ -296,7 +296,7 @@ int jeu1(DrawingWindow& w)
         } else {
             alpha = frand(10, 90);
             v0 = frand(10, 100);
-            std::cout << " [†" << (int )alpha << "∞ ; " << (int )v0 << " ]"
+            std::cout << " [ " << (int )alpha << "¬∞ ; " << (int )v0 << " ]"
                       << std::endl;
         }
 
@@ -317,7 +317,7 @@ int jeu1(DrawingWindow& w)
     std::stringstream msg;
     msg << " Joueur " << perdant;
     if (perdant == joueur)
-        msg << " s'est suicidÈ ! ";
+        msg << " s'est suicid√© ! ";
     else
         msg << " a perdu ! ";
     w.setColor("darkred");

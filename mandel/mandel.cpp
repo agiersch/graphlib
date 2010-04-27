@@ -6,14 +6,14 @@
 #include <sys/wait.h>
 
 struct parameters {
-    // nombre max d'itérations
+    // nombre max d'itÃ©rations
     int maxiter;
-    // zone d'intérêt par défaut
+    // zone d'intÃ©rÃªt par dÃ©faut
     double Rmin;
     double Rmax;
     double Imin;
     double Imax;
-    // facteur d'échelle
+    // facteur d'Ã©chelle
     double Rscale;
     double Iscale;
 };
@@ -79,10 +79,10 @@ void set_color(DrawingWindow& w, parameters& p, int i)
 }
 
 // Fonction de dessin de l'ensemble de Madelbrot, dans la zone
-// spécifiée, et avec la précision souhgaitée.
+// spÃ©cifiÃ©e, et avec la prÃ©cision souhgaitÃ©e.
 void do_mandel(DrawingWindow& w, parameters& p)
 {
-    int x, y;                   // le pixel considéré
+    int x, y;                   // le pixel considÃ©rÃ©
     double cr, ci;              // le complexe correspondant
     int iprev = -1;
 
@@ -119,7 +119,7 @@ void do_mandel(DrawingWindow& w, parameters& p)
     }
 }
     
-// Fonction de dessin principale, calcule la zone d'intérêt, appelle
+// Fonction de dessin principale, calcule la zone d'intÃ©rÃªt, appelle
 // do_mandel(), pour dessiner l'ensemle, et permet le zoom.
 void mandel(DrawingWindow &w)
 {
@@ -136,12 +136,12 @@ void mandel(DrawingWindow &w)
         int button;
         w.waitMousePress(x, y, button);
 
-        // calcul des coordonnées du point cliqué
+        // calcul des coordonnÃ©es du point cliquÃ©
         double Tr = p.Rmin + x * p.Rscale;
         double Ti = p.Imax - y * p.Rscale;
 
-        // calcul de la nouvelle zone d'intérêt :
-        // zoom ×2 en direction du point cliqué
+        // calcul de la nouvelle zone d'intÃ©rÃªt :
+        // zoom Ã—2 en direction du point cliquÃ©
         const int zoom = 2;
         double Rmin2 = p.Rmin / zoom;
         double Rmax2 = p.Rmax / zoom;
@@ -154,7 +154,7 @@ void mandel(DrawingWindow &w)
         Imin2 += Ishift;
         Imax2 += Ishift;
 
-        // affichage d'un rectangle autour de la nouvelle zone d'intérêt
+        // affichage d'un rectangle autour de la nouvelle zone d'intÃ©rÃªt
         w.setColor("white");
         w.drawRect((Rmin2 - p.Rmin) / p.Rscale, (p.Imax - Imin2) / p.Iscale,
                    (Rmax2 - p.Rmin) / p.Rscale, (p.Imax - Imax2) / p.Iscale);

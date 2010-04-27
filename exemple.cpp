@@ -1,8 +1,8 @@
 /*
- * Pour compiler et exécuter
+ * Pour compiler et exÃ©cuter
  * =========================
  *
- * 1. Créer le fichier exemple.pro :
+ * 1. CrÃ©er le fichier exemple.pro :
  *      +------------------------------------------------------------+
  *      |TEMPLATE = app                                              |
  *      |TARGET = exemple                                              |
@@ -13,7 +13,7 @@
  *      |SOURCES += exemple.cpp                                      |
  *      +------------------------------------------------------------+
  *
- * 2. Créer le fichier Makefile avec la commande :
+ * 2. CrÃ©er le fichier Makefile avec la commande :
  *      $ qmake-qt4 exemple.pro
  *    ou tout simplement :
  *      $ qmake-qt4
@@ -23,7 +23,7 @@
  *    ou tou simplement :
  *      $ make
  *
- * 4. Exécuter le programme avec la commande :
+ * 4. ExÃ©cuter le programme avec la commande :
  *      $ ./exemple
  */
 
