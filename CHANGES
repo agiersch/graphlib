@@ -1,12 +1,17 @@
+-- Mon, 22 Nov 2010 11:01:33 +0100
+
+        * Add DrawingWindow::drawTriangle().
+        * Add DrawingWindow::fillTriangle().
+
 -- Tue, 27 Apr 2010 17:30:13 +0200
 
-        * Made *sleep() methods static.
-        * Recoded to UTF8.
+        * Make *sleep() methods static.
+        * Recode to UTF8.
 
 -- Wed, 20 Jan 2010 19:20:49 +0100
 
-        * Added DrawingWindow::waitMousePress().
-        * Added DrawingWindow::mousePressEvent().
+        * Add DrawingWindow::waitMousePress().
+        * Add DrawingWindow::mousePressEvent().
 
 -- Tue, 27 Nov 2007 09:31:18 +0100
 

@@ -495,7 +495,7 @@ void DrawingWindow::drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3)
     safeUnlock(imageMutex);
 }
 
-//! Dessine un trianle plein.
+//! Dessine un triangle plein.
 /*!
  * Dessine un triangle plein défini par les coordonnées de ses
  * sommets: (x1, y1), (x2, y2) et (x3, y3).  Utilise la couleur de

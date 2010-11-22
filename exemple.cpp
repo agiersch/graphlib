@@ -20,7 +20,7 @@
  *
  * 3. Compiler avec la commande :
  *      $ make exemple
- *    ou tou simplement :
+ *    ou tout simplement :
  *      $ make
  *
  * 4. Exécuter le programme avec la commande :
