@@ -3,6 +3,7 @@
 
 #include <QBasicTimer>
 #include <QColor>
+#include <QFont>
 #include <QImage>
 #include <QMutex>
 #include <QPainter>
@@ -42,6 +43,9 @@ public:
     void setBgColor(unsigned int color);
     void setBgColor(const char *name);
     void setBgColor(float red, float green, float blue);
+
+    const QFont& getFont() const;
+    void setFont(const QFont& font);
 
     void clearGraph();
 

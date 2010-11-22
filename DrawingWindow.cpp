@@ -345,6 +345,24 @@ void DrawingWindow::setBgColor(float red, float green, float blue)
     setBgColor(QColor::fromRgbF(red, green, blue));
 }
 
+//! Retourne la fonte courante utilisée pour dessiner du texte.
+/*!
+ * \see QFont, setFont
+ */
+const QFont& DrawingWindow::getFont() const
+{
+    return painter->font();
+}
+
+//! Applique une nouvelle font pour dessiner du texte.
+/*!
+ * \see QFont, getFont
+ */
+void DrawingWindow::setFont(const QFont& font)
+{
+    painter->setFont(font);
+}
+
 //! Efface la fenêtre.
 /*!
  * La fenêtre est effacée avec la couleur de fond courante.
