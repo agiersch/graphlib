@@ -1034,7 +1034,7 @@ void DrawingWindow::realDrawText(int x, int y, const char *text, int flags)
         r.setTop(y);
     }
     syncMutex.lock();
-    painter->drawText(r, flags, text, &r);
+    painter->drawText(r, flags, QString::fromUtf8(text), &r);
     dirty(r);
     syncCondition.wakeAll();
     syncMutex.unlock();

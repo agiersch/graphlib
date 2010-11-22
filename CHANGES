@@ -1,17 +1,17 @@
--- Mon, 22 Nov 2010 14:54:43 +0100
+-- Mon, 22 Nov 2010 21:27:00 +0100
 
-        * Add methods getFont() and setFont().
-        * Add methods drawTriangle() and fillTriangle().
+        * Add methods drawTriangle and fillTriangle.
+        * Add methods getFont and setFont.
+	* Mark strings as UTF8 encoded for drawText.
 
 -- Tue, 27 Apr 2010 17:30:13 +0200
 
-        * Make *sleep() methods static.
+        * Make *sleep methods static.
         * Recode to UTF8.
 
 -- Wed, 20 Jan 2010 19:20:49 +0100
 
-        * Add DrawingWindow::waitMousePress().
-        * Add DrawingWindow::mousePressEvent().
+        * Add methods waitMousePress and mousePressEvent.
 
 -- Tue, 27 Nov 2007 09:31:18 +0100
 
