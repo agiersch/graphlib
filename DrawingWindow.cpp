@@ -473,6 +473,47 @@ void DrawingWindow::fillCircle(int x, int y, int r)
     painter->setBrush(Qt::NoBrush);
 }
 
+//! Dessine un triangle.
+/*!
+ * Dessine un triangle défini par les coordonnées de ses sommets:
+ * (x1, y1), (x2, y2) et (x3, y3).  Utilise la couleur de dessin
+ * courante.
+ *
+ * \param x1, y1        coordonnées du premier sommet du triangle
+ * \param x2, y2        coordonnées du deuxième sommet du triangle
+ * \param x3, y3        coordonnées du troisième sommet du triangle
+ *
+ * \see fillTriangle, setColor
+ */
+void DrawingWindow::drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3)
+{
+    QPolygon poly(3);
+    poly.putPoints(0, 3, x1, y1, x2, y2, x3, y3);
+    safeLock(imageMutex);
+    painter->drawConvexPolygon(poly);
+    dirty(poly.boundingRect());
+    safeUnlock(imageMutex);
+}
+
+//! Dessine un trianle plein.
+/*!
+ * Dessine un triangle plein défini par les coordonnées de ses
+ * sommets: (x1, y1), (x2, y2) et (x3, y3).  Utilise la couleur de
+ * dessin courante.
+ *
+ * \param x1, y1        coordonnées du premier sommet du triangle
+ * \param x2, y2        coordonnées du deuxième sommet du triangle
+ * \param x3, y3        coordonnées du troisième sommet du triangle
+ *
+ * \see drawTriangle, setColor
+ */
+void DrawingWindow::fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3)
+{
+    painter->setBrush(getColor());
+    drawTriangle(x1, y1, x2, y2, x3, y3);
+    painter->setBrush(Qt::NoBrush);
+}
+
 //! Écrit du texte.
 /*!
  * Écrit le texte text, aux coordonnées (x, y) et avec les paramètres

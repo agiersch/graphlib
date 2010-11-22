@@ -51,6 +51,8 @@ public:
     void fillRect(int x1, int y1, int x2, int y2);
     void drawCircle(int x, int y, int r);
     void fillCircle(int x, int y, int r);
+    void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
+    void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
 
     void drawText(int x, int y, const char *text, int flags = 0);
     void drawTextBg(int x, int y, const char *text, int flags = 0);
