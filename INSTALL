@@ -10,6 +10,7 @@ SRC += exemple.cpp exemple.pro
 .PHONY: install
 
 install:
+	rm -fr html/
 	doxygen Doxyfile
 	rm -fr $(DEST)
 	install -m 755 -d $(DEST)

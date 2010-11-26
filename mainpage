@@ -8,6 +8,9 @@
  * Voir la documentation et les exemples fournis pour en comprendre
  * l'utilisation.
  *
+ * <b>NB&nbsp;:</b> <i>Lors de l'utilisation de cette bibliothèque, il est
+ * fortement recommandé de créer un répertoire par programme.</i>
+ *
  * \section Documentation
  *
  * La documentation se trouve \link DrawingWindow par ici\endlink...
