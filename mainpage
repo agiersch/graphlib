@@ -8,6 +8,10 @@
  * Voir la documentation et les exemples fournis pour en comprendre
  * l'utilisation.
  *
+ * Les fichiers de développement de Qt doivent être installés sur le
+ * système.  Sur les systèmes GNU/Linux Debian et Ubuntu, il faut
+ * installer les paquets <i>libqt4-dev</i> et <i>qt4-qmake</i>.
+ *
  * <b>NB&nbsp;:</b> <i>Lors de l'utilisation de cette bibliothèque, il est
  * fortement recommandé de créer un répertoire par programme.</i>
  *
