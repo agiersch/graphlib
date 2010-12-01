@@ -149,7 +149,7 @@ public:
     const int y;
     const char *text;
     const int flags;
-    DrawTextEvent(int x_, int y_, const char* text_, int flags_)
+    DrawTextEvent(int x_, int y_, const char *text_, int flags_)
         : QEvent(static_cast<QEvent::Type>(DrawTextRequest))
         , x(x_), y(y_), text(text_), flags(flags_)
     { }
@@ -349,7 +349,7 @@ void DrawingWindow::setBgColor(float red, float green, float blue)
 /*!
  * \see QFont, setFont
  */
-const QFont& DrawingWindow::getFont() const
+const QFont &DrawingWindow::getFont() const
 {
     return painter->font();
 }
@@ -358,7 +358,7 @@ const QFont& DrawingWindow::getFont() const
 /*!
  * \see QFont, getFont
  */
-void DrawingWindow::setFont(const QFont& font)
+void DrawingWindow::setFont(const QFont &font)
 {
     painter->setFont(font);
 }
@@ -576,7 +576,6 @@ void DrawingWindow::drawTextBg(int x, int y, const char *text, int flags)
     painter->setBackgroundMode(Qt::TransparentMode);
 }
 
-
 //! Retourne la couleur d'un pixel.
 /*!
  * Retourne la couleur du pixel de coordonnées (x, y).  La valeur
@@ -727,7 +726,7 @@ void DrawingWindow::customEvent(QEvent *ev)
         close();
         break;
     case DrawTextRequest:
-        DrawTextEvent* tev = dynamic_cast<DrawTextEvent *>(ev);
+        DrawTextEvent *tev = dynamic_cast<DrawTextEvent *>(ev);
         realDrawText(tev->x, tev->y, tev->text, tev->flags);
         break;
     }
@@ -837,7 +836,7 @@ void DrawingWindow::initialize(DrawingWindow::ThreadFunction fun)
  * \param color                 couleur
  */
 inline
-void DrawingWindow::setColor(const QColor& color)
+void DrawingWindow::setColor(const QColor &color)
 {
     QPen pen(painter->pen());
     pen.setColor(color);
@@ -849,7 +848,7 @@ void DrawingWindow::setColor(const QColor& color)
  * \param color                 couleur
  */
 inline
-void DrawingWindow::setBgColor(const QColor& color)
+void DrawingWindow::setBgColor(const QColor &color)
 {
     painter->setBackground(color);
 }

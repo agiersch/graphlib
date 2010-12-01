@@ -44,8 +44,8 @@ public:
     void setBgColor(const char *name);
     void setBgColor(float red, float green, float blue);
 
-    const QFont& getFont() const;
-    void setFont(const QFont& font);
+    const QFont &getFont() const;
+    void setFont(const QFont &font);
 
     void clearGraph();
 
@@ -108,8 +108,8 @@ private:
 
     void initialize(ThreadFunction fun);
 
-    void setColor(const QColor& color);
-    void setBgColor(const QColor& color);
+    void setColor(const QColor &color);
+    void setBgColor(const QColor &color);
     QColor getColor();
     QColor getBgColor();
 
