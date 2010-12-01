@@ -545,6 +545,7 @@ void DrawingWindow::fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3)
  * \param text          texte à écrire
  * \param flags         paramètres d'alignement
  *
+ * \see drawText(int, int, const std::string &, int)
  * \see drawTextBg, setColor
  * \see QPainter::drawText
  */
@@ -558,6 +559,15 @@ void DrawingWindow::drawText(int x, int y, const char *text, int flags)
     safeUnlock(syncMutex);
 }
 
+//! Écrit du texte.
+/*!
+ * \see drawText(int, int, const char *, int)
+ */
+void DrawingWindow::drawText(int x, int y, const std::string &text, int flags)
+{
+    drawText(x, y, text.c_str(), flags);
+}
+
 //! Écrit du texte sur fond coloré.
 /*!
  * Écrit du texte comme drawText, mais l'arrière-plan est coloré avec
@@ -567,6 +577,7 @@ void DrawingWindow::drawText(int x, int y, const char *text, int flags)
  * \param text          texte à écrire
  * \param flags         paramètres d'alignement
  *
+ * \see drawTextBg(int, int, const std::string &, int)
  * \see drawText, setColor, setColorBg
  */
 void DrawingWindow::drawTextBg(int x, int y, const char *text, int flags)
@@ -574,6 +585,15 @@ void DrawingWindow::drawTextBg(int x, int y, const char *text, int flags)
     painter->setBackgroundMode(Qt::OpaqueMode);
     drawText(x, y, text, flags);
     painter->setBackgroundMode(Qt::TransparentMode);
+}
+
+//! Écrit du texte sur fond coloré.
+/*!
+ * \see drawTextBg(int, int, const char *, int)
+ */
+void DrawingWindow::drawTextBg(int x, int y, const std::string &text, int flags)
+{
+    drawTextBg(x, y, text.c_str(), flags);
 }
 
 //! Retourne la couleur d'un pixel.

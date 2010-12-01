@@ -218,7 +218,7 @@ void initialise(DrawingWindow& w)
                Qt::AlignHCenter);
     std::stringstream s;
     s << score1 << " / " << score2;
-    w.drawText(rtowX(w, 0), rtowY(w, 0) + 8, s.str().c_str(),
+    w.drawText(rtowX(w, 0), rtowY(w, 0) + 8, s.str(),
                Qt::AlignHCenter);
 }
 
@@ -322,7 +322,7 @@ int jeu1(DrawingWindow& w)
         msg << " a perdu ! ";
     w.setColor("darkred");
     w.setBgColor("white");
-    w.drawTextBg(w.width / 2, w.height / 3, msg.str().c_str(),
+    w.drawTextBg(w.width / 2, w.height / 3, msg.str(),
                  Qt::AlignCenter);
     w.sync();
     std::cout << msg.str() << std::endl;

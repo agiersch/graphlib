@@ -1,3 +1,7 @@
+-- Wed, 01 Dec 2010 12:11:36 +0100
+
+        * Allow std::string arguments for drawText and drawTextBg.
+
 -- Mon, 22 Nov 2010 21:27:00 +0100
 
         * Add methods drawTriangle and fillTriangle.

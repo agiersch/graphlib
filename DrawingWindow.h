@@ -12,6 +12,7 @@
 #include <QWaitCondition>
 #include <QWidget>
 #include <Qt>
+#include <string>
 
 class DrawingThread;
 
@@ -59,7 +60,9 @@ public:
     void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
 
     void drawText(int x, int y, const char *text, int flags = 0);
+    void drawText(int x, int y, const std::string &text, int flags = 0);
     void drawTextBg(int x, int y, const char *text, int flags = 0);
+    void drawTextBg(int x, int y, const std::string &text, int flags = 0);
 
     unsigned int getPointColor(int x, int y);
 
