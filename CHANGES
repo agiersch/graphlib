@@ -11,7 +11,7 @@
 
         * Ajout des méthodes drawTriangle et fillTriangle.
         * Ajout des méthodes getFont et setFont.
-	* Indique que les chaînes sont encodées en UTF8 pour drawText.
+        * Indique que les chaînes sont encodées en UTF8 pour drawText.
 
 -- mar., 27 avr. 2010 17:30:13 +0200
 

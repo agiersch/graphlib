@@ -142,7 +142,7 @@ public:
     { }
 };
 
-//! Demande de tracé de texte. 
+//! Demande de tracé de texte.
 class DrawTextEvent: public QEvent {
 public:
     const int x;
