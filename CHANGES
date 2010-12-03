@@ -1,3 +1,8 @@
+-- ven., 03 déc. 2010 09:34:15 +0100
+
+        * Ajout des méthodes setAntialiasing et setPenWidth.
+          Merci à Yoann Blein pour sa suggestion.
+
 -- mer., 01 déc. 2010 12:11:36 +0100
 
         * Autorise un paramètre de type std::string pour drawText et drawTextBg.

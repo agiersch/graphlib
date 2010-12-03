@@ -345,6 +345,19 @@ void DrawingWindow::setBgColor(float red, float green, float blue)
     setBgColor(QColor::fromRgbF(red, green, blue));
 }
 
+//! Change l'épaisseur du pinceau
+/*!
+ * Le pinceau à une épaisseur de 1 par défaut.
+ *
+ * \param width         épaisseur du pinceau
+ */
+void DrawingWindow::setPenWidth(int width)
+{
+    QPen pen(painter->pen());
+    pen.setWidth(width);
+    painter->setPen(pen);
+}
+
 //! Retourne la fonte courante utilisée pour dessiner du texte.
 /*!
  * \see QFont, setFont
@@ -361,6 +374,20 @@ const QFont &DrawingWindow::getFont() const
 void DrawingWindow::setFont(const QFont &font)
 {
     painter->setFont(font);
+}
+
+//! Active ou non l'antialiasing.
+/*!
+ * Permet de lisser le dessin.
+ * Fonctionnalité désactivée par défaut.
+ *
+ * \param state         état de l'antialiasing
+ *
+ * \bug                 expérimental
+ */
+void DrawingWindow::setAntialiasing(bool state)
+{
+    painter->setRenderHint(QPainter::Antialiasing, state);
 }
 
 //! Efface la fenêtre.

@@ -45,8 +45,12 @@ public:
     void setBgColor(const char *name);
     void setBgColor(float red, float green, float blue);
 
+    void setPenWidth(int width);
+
     const QFont &getFont() const;
     void setFont(const QFont &font);
+
+    void setAntialiasing(bool state);
 
     void clearGraph();
 
