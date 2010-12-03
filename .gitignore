@@ -1,0 +1,9 @@
+*~
+*.o
+html/
+*/Makefile
+chateaux/chateaux
+mandel/mandel
+minimal/DrawingWindow.*
+minimal/hello
+test/hello
