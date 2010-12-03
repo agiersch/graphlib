@@ -1,22 +1,22 @@
--- Wed, 01 Dec 2010 12:11:36 +0100
+-- mer., 01 déc. 2010 12:11:36 +0100
 
-        * Allow std::string arguments for drawText and drawTextBg.
+        * Autorise un paramètre de type std::string pour drawText et drawTextBg.
 
--- Mon, 22 Nov 2010 21:27:00 +0100
+-- lun., 22 nov. 2010 21:27:00 +0100
 
-        * Add methods drawTriangle and fillTriangle.
-        * Add methods getFont and setFont.
-	* Mark strings as UTF8 encoded for drawText.
+        * Ajout des méthodes drawTriangle et fillTriangle.
+        * Ajout des méthodes getFont et setFont.
+	* Indique que les chaînes sont encodées en UTF8 pour drawText.
 
--- Tue, 27 Apr 2010 17:30:13 +0200
+-- mar., 27 avr. 2010 17:30:13 +0200
 
-        * Make *sleep methods static.
-        * Recode to UTF8.
+        * Rend les méthodes *sleep statiques.
+        * Recodé en UTF8.
 
--- Wed, 20 Jan 2010 19:20:49 +0100
+-- mer., 20 jan. 2010 19:20:49 +0100
 
-        * Add methods waitMousePress and mousePressEvent.
+        * Ajout des méthodes waitMousePress et mousePressEvent.
 
--- Tue, 27 Nov 2007 09:31:18 +0100
+-- mar., 27 nov. 2007 09:31:18 +0100
 
-        * Initial release.
+        * Version initiale.
