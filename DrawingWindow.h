@@ -64,7 +64,7 @@ public:
     void drawTextBg(int x, int y, const char *text, int flags = 0);
     void drawTextBg(int x, int y, const std::string &text, int flags = 0);
 
-    unsigned int getPointColor(int x, int y);
+    unsigned int getPointColor(int x, int y) const;
 
     bool waitMousePress(int &x, int &y, int &button,
                         unsigned long time = ULONG_MAX);

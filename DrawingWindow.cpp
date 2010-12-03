@@ -607,7 +607,7 @@ void DrawingWindow::drawTextBg(int x, int y, const std::string &text, int flags)
  *
  * \see setColor(unsigned int), setBgColor(unsigned int)
  */
-unsigned int DrawingWindow::getPointColor(int x, int y)
+unsigned int DrawingWindow::getPointColor(int x, int y) const
 {
     return image->pixel(x, y);
 }
