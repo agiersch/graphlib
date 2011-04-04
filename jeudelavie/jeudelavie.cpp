@@ -2,64 +2,94 @@
 #include <QApplication>
 #include <iostream>
 
-#define LARGEUR 213
-#define HAUTEUR 160
+#define LARGEUR 1200
+#define HAUTEUR 900
 
-#define TCELL 5                 // taille d'une cellule
-
-#define BORDURE  0x00000000U    // noir
+#define BORDURE  0x00ffffffU    // blanc
 #define NAISSANT 0x0000ff00U    // vert
 #define VIVANT   0x000000ffU    // bleu
 #define MOURANT  0x00ff0000U    // rouge
 #define MORT     0x00ffffffU    // blanc
 
-bool cells[LARGEUR][HAUTEUR][2];
+struct cell {
+    int neigh;
+    bool now;
+    bool next;
+};
+cell cells[LARGEUR][HAUTEUR];
 
-void init()
+void majVoisins(int i, int j, int delta)
 {
-    srand(time(NULL));
-    for (int i = 0 ; i < LARGEUR ; ++i)
-        for (int j = 0 ; j < HAUTEUR ; ++j)
-            cells[i][j][0] = cells[i][j][1] = (rand() < RAND_MAX / 2);
-}
-
-void draw(DrawingWindow& w)
-{
-    for (int i = 0 ; i < LARGEUR ; ++i)
-        for (int j = 0 ; j < HAUTEUR ; ++j) {
-            if (cells[i][j][0] == cells[i][j][1])
-                w.setColor(cells[i][j][1] ? VIVANT : MORT);
-            else
-                w.setColor(cells[i][j][1] ? NAISSANT : MOURANT);
-            w.fillRect(TCELL * i + 1, TCELL * j + 1,
-                       TCELL * (i + 1) - 1, TCELL * (j + 1) - 1);
-            cells[i][j][0] = cells[i][j][1];
-        }
-}
-
-int nbVoisins(int i, int j)
-{
-    int n = 0;
     for (int k = i - 1 ; k <= i + 1 ; ++k)
         for (int l = j - 1 ; l <= j + 1 ; ++l)
             if (k != i || l != j) {
                 int vi = (k + LARGEUR) % LARGEUR;
                 int vj = (l + HAUTEUR) % HAUTEUR;
-                if (cells[vi][vj][0])
-                    ++n;
+                cells[vi][vj].neigh += delta;
             }
-    return n;
 }
 
-void update()
+void dessine(DrawingWindow& w, int i, int j, unsigned couleur)
+{
+    w.setColor(couleur);
+    w.drawPoint(i, j);
+}
+
+void init(DrawingWindow& w)
+{
+    srand(time(NULL));
+    for (int i = 0 ; i < LARGEUR ; ++i)
+        for (int j = 0 ; j < HAUTEUR ; ++j)
+            cells[i][j].neigh = 0;
+    for (int i = 0 ; i < LARGEUR ; ++i)
+        for (int j = 0 ; j < HAUTEUR ; ++j) {
+            cells[i][j].next = (rand() < RAND_MAX / 2);
+            cells[i][j].now = !cells[i][j].next;
+            if (cells[i][j].now) {
+                majVoisins(i, j, 1);
+                dessine(w, i, j, VIVANT);
+            } else {
+                dessine(w, i, j, MORT);
+            }
+        }
+}
+
+void update0(DrawingWindow& w)
 {
     for (int i = 0 ; i < LARGEUR ; ++i)
         for (int j = 0 ; j < HAUTEUR ; ++j) {
-            int v = nbVoisins(i, j);
-            if (cells[i][j][0])
-                cells[i][j][1] = (v == 2 || v == 3);
-            else
-                cells[i][j][1] = (v == 3);
+            int n = cells[i][j].neigh;
+            if (cells[i][j].now) {
+                if (n < 2 || n > 3) {
+                    cells[i][j].next = false;
+                    dessine(w, i, j, MOURANT);
+                }
+            } else {
+                if (n == 3) {
+                    cells[i][j].next = true;
+                    dessine(w, i, j, NAISSANT);
+                }
+            }
+        }
+}
+
+void update1(DrawingWindow& w)
+{
+    for (int i = 0 ; i < LARGEUR ; ++i)
+        for (int j = 0 ; j < HAUTEUR ; ++j) {
+            if (cells[i][j].now) {
+                if (!cells[i][j].next) {
+                    cells[i][j].now = false;
+                    majVoisins(i, j, -1);
+                    dessine(w, i, j, MORT);
+                }
+            } else {
+                if (cells[i][j].next) {
+                    cells[i][j].now = true;
+                    majVoisins(i, j, 1);
+                    dessine(w, i, j, VIVANT);
+                }
+            }
         }
 }
 
@@ -67,20 +97,22 @@ void jeudelavie(DrawingWindow& w)
 {
     w.setBgColor(BORDURE);
     w.clearGraph();
-    init();
+    init(w);
+    w.sync();
     for (int gen = 0 ; ; ++gen) {
         if (gen % 10 == 0)
             std::cerr << "generation " << gen << std::endl;
-        w.sync();
-        draw(w);
-        update();
+        update0(w);
+        //        w.sync();
+        update1(w);
+        //        w.sync();
     }
 }
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    DrawingWindow win(jeudelavie, TCELL * LARGEUR + 1, TCELL * HAUTEUR + 1);
+    DrawingWindow win(jeudelavie, LARGEUR, HAUTEUR);
     win.show();
     return app.exec();
 }
