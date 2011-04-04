@@ -3,6 +3,7 @@
 html/
 */Makefile
 chateaux/chateaux
+jeudelavie/jeudelavie
 mandel/mandel
 minimal/DrawingWindow.*
 minimal/hello
