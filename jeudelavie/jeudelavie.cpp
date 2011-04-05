@@ -5,10 +5,7 @@
 #define LARGEUR 1200
 #define HAUTEUR 900
 
-#define BORDURE  0x00ffffffU    // blanc
-#define NAISSANT 0x0000ff00U    // vert
 #define VIVANT   0x000000ffU    // bleu
-#define MOURANT  0x00ff0000U    // rouge
 #define MORT     0x00ffffffU    // blanc
 
 struct cell {
@@ -43,13 +40,10 @@ void init(DrawingWindow& w)
             cells[i][j].neigh = 0;
     for (int i = 0 ; i < LARGEUR ; ++i)
         for (int j = 0 ; j < HAUTEUR ; ++j) {
-            cells[i][j].next = (rand() < RAND_MAX / 2);
-            cells[i][j].now = !cells[i][j].next;
+            cells[i][j].now = cells[i][j].next = (rand() < RAND_MAX / 2);
             if (cells[i][j].now) {
                 majVoisins(i, j, 1);
                 dessine(w, i, j, VIVANT);
-            } else {
-                dessine(w, i, j, MORT);
             }
         }
 }
@@ -62,12 +56,10 @@ void update0(DrawingWindow& w)
             if (cells[i][j].now) {
                 if (n < 2 || n > 3) {
                     cells[i][j].next = false;
-                    dessine(w, i, j, MOURANT);
                 }
             } else {
                 if (n == 3) {
                     cells[i][j].next = true;
-                    dessine(w, i, j, NAISSANT);
                 }
             }
         }
@@ -95,7 +87,7 @@ void update1(DrawingWindow& w)
 
 void jeudelavie(DrawingWindow& w)
 {
-    w.setBgColor(BORDURE);
+    w.setBgColor(MORT);
     w.clearGraph();
     init(w);
     w.sync();
@@ -103,9 +95,8 @@ void jeudelavie(DrawingWindow& w)
         if (gen % 10 == 0)
             std::cerr << "generation " << gen << std::endl;
         update0(w);
-        //        w.sync();
         update1(w);
-        //        w.sync();
+        w.sync();
     }
 }
 
