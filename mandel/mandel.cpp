@@ -99,7 +99,7 @@ void do_mandel(DrawingWindow& w, parameters& p)
                     int i = check_point(p, cr, ci);
                     if (i != iprev) {
                         set_color(w, p, i);
-                        iprev = 1;
+                        iprev = -1;
                     }
                     if (k > 2) {
                         w.fillRect(x, y, x + k - 1, y + k - 1);
