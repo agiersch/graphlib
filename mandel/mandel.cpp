@@ -105,7 +105,7 @@ static void do_mandel(DrawingWindow& w, parameters& p)
             cr = p.Rmin;
             int x0 = 0;
             int i0 = check_point(p, cr, ci);
-            for (x = 1 ; x < w.width ; x += k) {
+            for (x = k ; x < w.width ; x += k) {
                 cr = p.Rmin + x * p.Rscale;
                 if (x % kk != 0 || y % kk != 0 || k == kmax) {
                     int i = check_point(p, cr, ci);
