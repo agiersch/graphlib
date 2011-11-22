@@ -97,32 +97,23 @@ static void do_mandel(DrawingWindow& w, parameters& p)
     int x, y;                   // le pixel considéré
     double cr, ci;              // le complexe correspondant
 
-    int kmax = 4;
-    for (int k = kmax ; k != 0 ; k /= 2) {
-        int kk = 2 * k;
-        for (y = 0 ; y < w.height ; y += k) {
-            ci = p.Imax - y * p.Iscale;
-            cr = p.Rmin;
-            int x0 = 0;
-            int i0 = check_point(p, cr, ci);
-            for (x = k ; x < w.width ; x += k) {
-                cr = p.Rmin + x * p.Rscale;
-                if (x % kk != 0 || y % kk != 0 || k == kmax) {
-                    int i = check_point(p, cr, ci);
-                    if (i != i0) {
-                        set_color(w, p, i0);
-                        if (k == 1)
-                            w.drawLine(x0, y, x - 1, y);
-                        else
-                            w.fillRect(x0, y, x - 1, y + k - 1);
-                        i0 = i;
-                        x0 = x;
-                    }
-                }
+    for (y = 0 ; y < w.height ; y++) {
+        ci = p.Imax - y * p.Iscale;
+        cr = p.Rmin;
+        int x0 = 0;
+        int i0 = check_point(p, cr, ci);
+        for (x = 1 ; x < w.width ; x++) {
+            cr = p.Rmin + x * p.Rscale;
+            int i = check_point(p, cr, ci);
+            if (i != i0) {
+                set_color(w, p, i0);
+                w.drawLine(x0, y, x - 1, y);
+                i0 = i;
+                x0 = x;
             }
-            set_color(w, p, i0);
-            w.fillRect(x0, y, w.width - 1, y + k - 1);
         }
+        set_color(w, p, i0);
+        w.drawLine(x0, y, w.width - 1, y);
     }
 }
     
