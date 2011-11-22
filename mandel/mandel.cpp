@@ -28,18 +28,30 @@ const parameters initial_parameters = {
     0.0,                        // Iscale
 };
 
-int check_point(parameters& p, double cr, double ci)
+static inline double sqr(double x)
 {
-    double zr = 0.0;
-    double zi = 0.0;
-    double zr2 = 0.0;
-    double zi2 = 0.0;
+    return x * x;
+}
+
+static int check_point(parameters& p, double cr, double ci)
+{
+    double zr2, zi2;
+    zi2 = sqr(ci);
+    if (sqr(cr + 1) + zi2 < 1.0 / 16.0)
+        return p.maxiter;
+    double x4 = cr - 1.0 / 4.0;
+    double q = sqr(x4) + zi2;
+    if (q * (q + x4) < zi2 / 4.0)
+        return p.maxiter;
+    zr2 = sqr(cr);
+    double zr = cr;
+    double zi = ci;
     int i;
-    for (i = 0 ; zr2 + zi2 < 4 && i < p.maxiter; i++) {
+    for (i = 0 ; i < p.maxiter && zr2 + zi2 < 4 ; i++) {
         zi = 2 * zr * zi + ci;
         zr = zr2 - zi2 + cr;
-        zr2 = zr * zr;
-        zi2 = zi * zi;
+        zr2 = sqr(zr);
+        zi2 = sqr(zi);
     }
     return i;
 }
@@ -51,7 +63,7 @@ int check_point(parameters& p, double cr, double ci)
 //     return check_point(p, cr, ci);
 // }
 
-void set_color(DrawingWindow& w, parameters& p, int i)
+static void set_color(DrawingWindow& w, parameters& p, int i)
 {
     double rouge, vert, bleu;
     if (i >= p.maxiter) {
@@ -80,48 +92,43 @@ void set_color(DrawingWindow& w, parameters& p, int i)
 
 // Fonction de dessin de l'ensemble de Madelbrot, dans la zone
 // spécifiée, et avec la précision souhgaitée.
-void do_mandel(DrawingWindow& w, parameters& p)
+static void do_mandel(DrawingWindow& w, parameters& p)
 {
     int x, y;                   // le pixel considéré
     double cr, ci;              // le complexe correspondant
-    int iprev = -1;
 
-    int kmax = 16;
+    int kmax = 4;
     for (int k = kmax ; k != 0 ; k /= 2) {
         int kk = 2 * k;
-        double ar = k * p.Rscale;
-        double ai = k * p.Iscale;
-        cr = p.Rmin;
-        for (x = 0 ; x < w.width ; x += k) {
-            ci = p.Imax;
-            for (y = 0 ; y < w.height ; y += k) {
+        for (y = 0 ; y < w.height ; y += k) {
+            ci = p.Imax - y * p.Iscale;
+            cr = p.Rmin;
+            int x0 = 0;
+            int i0 = check_point(p, cr, ci);
+            for (x = 1 ; x < w.width ; x += k) {
+                cr = p.Rmin + x * p.Rscale;
                 if (x % kk != 0 || y % kk != 0 || k == kmax) {
                     int i = check_point(p, cr, ci);
-                    if (i != iprev) {
-                        set_color(w, p, i);
-                        iprev = -1;
-                    }
-                    if (k > 2) {
-                        w.fillRect(x, y, x + k - 1, y + k - 1);
-                    } else {
-                        w.drawPoint(x, y);
-                        if (k == 2) {
-                            w.drawPoint(x + 1, y);
-                            w.drawPoint(x, y + 1);
-                            w.drawPoint(x + 1, y + 1);
-                        }
+                    if (i != i0) {
+                        set_color(w, p, i0);
+                        if (k == 1)
+                            w.drawLine(x0, y, x - 1, y);
+                        else
+                            w.fillRect(x0, y, x - 1, y + k - 1);
+                        i0 = i;
+                        x0 = x;
                     }
                 }
-                ci -= ai;
             }
-            cr += ar;
+            set_color(w, p, i0);
+            w.fillRect(x0, y, w.width - 1, y + k - 1);
         }
     }
 }
     
 // Fonction de dessin principale, calcule la zone d'intérêt, appelle
 // do_mandel(), pour dessiner l'ensemle, et permet le zoom.
-void mandel(DrawingWindow &w)
+static void mandel(DrawingWindow &w)
 {
     parameters p = initial_parameters;
     while (1) {
