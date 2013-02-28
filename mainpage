@@ -3,7 +3,7 @@
  * Voici quelques lignes de codes devant permettre d'écrire de manière
  * assez simples des petites applications graphiques en C++.  Le code
  * s'appuie sur la bibliothèque <a
- * href="http://trolltech.com/products/qt">Qt</a>.
+ * href="http://qt-project.org/">Qt</a>.
  *
  * Voir la documentation et les exemples fournis pour en comprendre
  * l'utilisation.
