@@ -48,19 +48,20 @@ void init(DrawingWindow& w)
         }
 }
 
-void update0(DrawingWindow& w)
+void update0(DrawingWindow& w __attribute__((unused)))
 {
     for (int i = 0 ; i < LARGEUR ; ++i)
         for (int j = 0 ; j < HAUTEUR ; ++j) {
-            int n = cells[i][j].neigh;
-            if (cells[i][j].now) {
-                if (n < 2 || n > 3) {
-                    cells[i][j].next = false;
-                }
-            } else {
-                if (n == 3) {
-                    cells[i][j].next = true;
-                }
+            switch (cells[i][j].neigh) {
+            case 2:
+                // cells[i][j].next = cells[i][j].now; // useless
+                break;
+            case 3:
+                cells[i][j].next = true;
+                break;
+            default:
+                cells[i][j].next = false;
+                break;
             }
         }
 }
