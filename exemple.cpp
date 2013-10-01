@@ -3,15 +3,15 @@
  * =========================
  *
  * 1. Créer le fichier exemple.pro :
- *      +------------------------------------------------------------+
- *      |TEMPLATE = app                                              |
- *      |TARGET = exemple                                              |
- *      |CONFIG += qt                                                |
- *      |CONFIG += debug                                             |
- *      |HEADERS += DrawingWindow.h                                  |
- *      |SOURCES += DrawingWindow.cpp                                |
- *      |SOURCES += exemple.cpp                                      |
- *      +------------------------------------------------------------+
+ *    ,----
+ *    |TEMPLATE = app
+ *    |TARGET = exemple
+ *    |CONFIG += qt
+ *    |CONFIG += debug
+ *    |HEADERS += DrawingWindow.h
+ *    |SOURCES += DrawingWindow.cpp
+ *    |SOURCES += exemple.cpp
+ *    `----
  *
  * 2. Créer le fichier Makefile avec la commande :
  *      $ qmake-qt4 exemple.pro

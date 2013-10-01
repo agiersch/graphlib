@@ -3,11 +3,11 @@
  * =============
  *
  * 1. Créer le fichier hello.pro :
- *      +------------------------------------------------------------+
- *      |TARGET = hello                                              |
- *      |CONFIG += qt debug                                          |
- *      |SOURCES += hello.cc                                         |
- *      +------------------------------------------------------------+
+ *    ,----
+ *    |TARGET = hello
+ *    |CONFIG += qt debug
+ *    |SOURCES += hello.cpp
+ *    `-----
  *
  * 2. Créer le fichier Makefile avec la commande :
  *      $ qmake -makefile hello.pro
