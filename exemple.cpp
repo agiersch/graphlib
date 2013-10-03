@@ -37,7 +37,7 @@ float frand()
     return rand() / (float )RAND_MAX;
 }
 
-void exemple1(DrawingWindow &w)
+void exemple1(DrawingWindow& w)
 {
     const int cx = w.width / 2;
     const int cy = w.height / 2;
@@ -52,7 +52,7 @@ void exemple1(DrawingWindow &w)
     }
 }
 
-void exemple2(DrawingWindow &w)
+void exemple2(DrawingWindow& w)
 {
     int width = std::min(w.width, w.height) / 2;
     for (int z = 0; z <= width; z++) {
@@ -78,7 +78,7 @@ void exemple2(DrawingWindow &w)
     }
 }
 
-void exemple3(DrawingWindow &w)
+void exemple3(DrawingWindow& w)
 {
     while (1) {
         int x1 = rand() % w.width;
