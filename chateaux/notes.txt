@@ -1,4 +1,4 @@
-Données
+DonnÃ©es
 -------
 
 g       constante de gravitation
@@ -12,23 +12,23 @@ alpha   angle de tir
 Variables
 ---------
 
-fx(t)   composante x de la force de frottement à l'instant t
-fy(t)   composante y de la force de frottement à l'instant t
+fx(t)   composante x de la force de frottement Ã  l'instant t
+fy(t)   composante y de la force de frottement Ã  l'instant t
 
-ax(t)   composante x de l'accélération à l'instant t
-ay(t)   composante y de l'accélération à l'instant t
+ax(t)   composante x de l'accÃ©lÃ©ration Ã  l'instant t
+ay(t)   composante y de l'accÃ©lÃ©ration Ã  l'instant t
 
-x(t)    composante x de la position à l'instant t
-y(t)    composante y de la position à l'instant t
+x(t)    composante x de la position Ã  l'instant t
+y(t)    composante y de la position Ã  l'instant t
 
-vx(t)   composante x de la vitesse à l'instant t
-vy(t)   composante y de la vitesse à l'instant t
+vx(t)   composante x de la vitesse Ã  l'instant t
+vy(t)   composante y de la vitesse Ã  l'instant t
 
-vrx(t)  composante x de la vitesse relative à l'instant t
+vrx(t)  composante x de la vitesse relative Ã  l'instant t
         = vx(t) - wnd
-vry(t)  composante y de la vitesse relative à l'instant t
+vry(t)  composante y de la vitesse relative Ã  l'instant t
         = vy(t)
-|vr(t)| vitesse relative à l'instant t
+|vr(t)| vitesse relative Ã  l'instant t
         = SQRT(vrx(t)^2 + vry(t)^2)
 
 Initialisation
@@ -43,7 +43,7 @@ y(0)    = y0
 vx(0)   = v0 cos(alpha)
 vy(0)   = v0 sin(alpha)
 
-Mise à jour
+Mise Ã  jour
 -----------
 
 |f(t)|  = -k |vr(t)| vr(t)
@@ -67,31 +67,31 @@ vy(t+1) = vy(t) + ay(t) dt
 
 Algorithme
 ----------
-Données
+DonnÃ©es
         x0      x(t)
         y0      y(t)
         vx0     vx(t)
         vy0     vy(t)
 
-Résultats
+RÃ©sultats
         x1      x(t+1)
         y1      y(t+1)
         vx1     vx(t+1)
         vy1     vy(t+1)
 
-Intermédiaires
+IntermÃ©diaires
         vxr     vx(t) - wnd     
-        kvr     - k × vr(t)
+        kvr     - k Ã— vr(t)
         ax      ax(t)
         ay      ay(t)
 
 Algorithme
         vxr <- vx0 - wnd
-        kvr <- -k × SQRT(vxr × vxr + vy0 × vy0)
-        ax  <- kvr × vxr
-        ay  <- kvr × vy0 - g
+        kvr <- -k Ã— SQRT(vxr Ã— vxr + vy0 Ã— vy0)
+        ax  <- kvr Ã— vxr
+        ay  <- kvr Ã— vy0 - g
 
-        x1  <- x0 + vx0 × dt
-        y1  <- y0 + vy0 × dt
-        vx1 <- vx0 + ax0 × dt
-        vy1 <- vy0 + ay0 × dt
+        x1  <- x0 + vx0 Ã— dt
+        y1  <- y0 + vy0 Ã— dt
+        vx1 <- vx0 + ax0 Ã— dt
+        vy1 <- vy0 + ay0 Ã— dt
