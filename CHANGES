@@ -1,27 +1,33 @@
--- ven., 03 déc. 2010 09:34:15 +0100
+-- dim. 10 nov. 2013 18:26:00 +0100
+
+        * Contournement d'un bug avec certaines versions de Qt,
+          lorsque les deux paires de coordonnées sont égales pour
+          drawLine ou drawRect.
+
+-- ven. 03 déc. 2010 09:34:15 +0100
 
         * Ajout des méthodes setAntialiasing et setPenWidth.
           Merci à Yoann Blein pour sa suggestion.
 
--- mer., 01 déc. 2010 12:11:36 +0100
+-- mer. 01 déc. 2010 12:11:36 +0100
 
         * Autorise un paramètre de type std::string pour drawText et drawTextBg.
 
--- lun., 22 nov. 2010 21:27:00 +0100
+-- lun. 22 nov. 2010 21:27:00 +0100
 
         * Ajout des méthodes drawTriangle et fillTriangle.
         * Ajout des méthodes getFont et setFont.
         * Indique que les chaînes sont encodées en UTF8 pour drawText.
 
--- mar., 27 avr. 2010 17:30:13 +0200
+-- mar. 27 avr. 2010 17:30:13 +0200
 
         * Rend les méthodes *sleep statiques.
         * Recodé en UTF8.
 
--- mer., 20 jan. 2010 19:20:49 +0100
+-- mer. 20 jan. 2010 19:20:49 +0100
 
         * Ajout des méthodes waitMousePress et mousePressEvent.
 
--- mar., 27 nov. 2007 09:31:18 +0100
+-- mar. 27 nov. 2007 09:31:18 +0100
 
         * Version initiale.

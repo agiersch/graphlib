@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2010, Arnaud Giersch <arnaud.giersch@iut-bm.univ-fcomte.fr>
+ * Copyright (c) 2007-2013, Arnaud Giersch <arnaud.giersch@iut-bm.univ-fcomte.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@
  *  \brief Fenêtre de dessin.
  *
  * \author Arnaud Giersch <arnaud.giersch@iut-bm.univ-fcomte.fr>
- * \date 2007-2010
+ * \date 2007-2013
  *
  * Cette classe décrit un widget Qt permettant d'écrire des
  * applications graphiques simples.  Pour cela, il faut définir une
@@ -433,10 +433,14 @@ void DrawingWindow::drawPoint(int x, int y)
  */
 void DrawingWindow::drawLine(int x1, int y1, int x2, int y2)
 {
-    safeLock(imageMutex);
-    painter->drawLine(x1, y1, x2, y2);
-    dirty(x1, y1, x2, y2);
-    safeUnlock(imageMutex);
+    if (x1 == x2 && y1 == y2) {
+        drawPoint(x1, y1);
+    } else {
+        safeLock(imageMutex);
+        painter->drawLine(x1, y1, x2, y2);
+        dirty(x1, y1, x2, y2);
+        safeUnlock(imageMutex);
+    }
 }
 
 //! Dessine un rectangle.
@@ -452,14 +456,18 @@ void DrawingWindow::drawLine(int x1, int y1, int x2, int y2)
  */
 void DrawingWindow::drawRect(int x1, int y1, int x2, int y2)
 {
-    QRect r;
-    r.setCoords(x1, y1, x2 - 1, y2 - 1);
-    r = r.normalized();
-    safeLock(imageMutex);
-    painter->drawRect(r);
-    r.adjust(0, 0, 1, 1);
-    dirty(r);
-    safeUnlock(imageMutex);
+    if (x1 == x2 && y1 == y2) {
+        drawPoint(x1, y1);
+    } else {
+        QRect r;
+        r.setCoords(x1, y1, x2 - 1, y2 - 1);
+        r = r.normalized();
+        safeLock(imageMutex);
+        painter->drawRect(r);
+        r.adjust(0, 0, 1, 1);
+        dirty(r);
+        safeUnlock(imageMutex);
+    }
 }
 
 //! Dessine un rectangle plein.
