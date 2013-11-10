@@ -1,9 +1,6 @@
 #include <DrawingWindow.h>
 #include <QApplication>
 #include <iostream>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 
 struct parameters {
     // nombre max d'itérations
@@ -55,13 +52,6 @@ static int check_point(parameters& p, double cr, double ci)
     }
     return i;
 }
-
-// int check_point(parameters& p, int x, int y)
-// {
-//     double cr = p.Rmin + x * p.Rscale;
-//     double ci = p.Imax - y * p.Iscale;
-//     return check_point(p, cr, ci);
-// }
 
 static void set_color(DrawingWindow& w, parameters& p, int i)
 {
