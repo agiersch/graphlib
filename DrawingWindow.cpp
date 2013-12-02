@@ -751,7 +751,7 @@ void DrawingWindow::usleep(unsigned long usecs)
 void DrawingWindow::closeEvent(QCloseEvent *ev)
 {
     timer.stop();
-    thread->terminate();
+    thread->exit();
     syncMutex.lock();
     mouseMutex.lock();
     terminateThread = true;     // this flag is needed for the case
@@ -765,7 +765,10 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
     mouseMutex.unlock();
     syncMutex.unlock();
     QWidget::closeEvent(ev);
-    thread->wait();
+    if (!thread->wait(250)) {
+        thread->terminate();
+        thread->wait();
+    }
 }
 
 /*!

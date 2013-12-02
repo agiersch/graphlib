@@ -1,3 +1,7 @@
+-- lun. 02 déc. 2013 09:26:02 +0100
+
+        * Correction d'un problème de blocage à la fin de l'exécution.
+
 -- dim. 10 nov. 2013 18:26:00 +0100
 
         * Contournement d'un bug avec certaines versions de Qt,
