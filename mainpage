@@ -16,9 +16,9 @@
  *
  * \section Documentation
  *
- * La documentation se trouve \link DrawingWindow par ici\endlink...
- * Des exemples d'utilisation sont <a href="./examples.html">par
- * là</a>.
+ * \link DrawingWindow La documentation se trouve par ici\endlink,
+ * et des
+ * <a href="./examples.html">exemples d'utilisation sont par là</a>.
  *
  * \section Télécharger
  *
