@@ -669,7 +669,7 @@ bool DrawingWindow::waitMousePress(int &x, int &y, int &button,
     if (terminateThread) {
         pressed = false;
     } else {
-        pressed = mouseCondition.wait(&mouseMutex, time);
+        pressed = mouseCondition.wait(&mouseMutex, time) && !terminateThread;
         if (pressed) {
             x = mousePos.x();
             y = mousePos.y();
