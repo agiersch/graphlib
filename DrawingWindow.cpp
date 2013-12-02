@@ -745,6 +745,9 @@ void DrawingWindow::usleep(unsigned long usecs)
     DrawingThread::usleep(usecs);
 }
 
+//--- DrawingWindow (protected methods) --------------------------------
+//! \cond show_protected
+
 /*!
  * \see QWidget
  */
@@ -853,6 +856,8 @@ void DrawingWindow::timerEvent(QTimerEvent *ev)
         QWidget::timerEvent(ev);
     }
 }
+
+// \endcond
 
 //--- DrawingWindow (private methods) ----------------------------------
 

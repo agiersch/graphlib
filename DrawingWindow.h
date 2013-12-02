@@ -81,6 +81,7 @@ public:
     static void usleep(unsigned long usecs);
 
 protected:
+    //! \cond show_protected
     void closeEvent(QCloseEvent *ev);
     void customEvent(QEvent *ev);
     void mousePressEvent(QMouseEvent *ev);
@@ -88,6 +89,7 @@ protected:
     void paintEvent(QPaintEvent *ev);
     void showEvent(QShowEvent *ev);
     void timerEvent(QTimerEvent *ev);
+    //! \endcond
 
 private:
     //! Intervalle de temps entre deux rendus (ms)
