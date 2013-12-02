@@ -810,17 +810,10 @@ void DrawingWindow::mousePressEvent(QMouseEvent *ev)
  */
 void DrawingWindow::keyPressEvent(QKeyEvent *ev)
 {
-    bool accept = true;
-    switch (ev->key()) {
-    case Qt::Key_Escape:
-        close();
-        break;
-    default:
-        accept = false;
-        break;
-    }
-    if (accept)
+    if (ev->key() == Qt::Key_Escape) {
         ev->accept();
+        close();
+    }
 }
 
 /*!
