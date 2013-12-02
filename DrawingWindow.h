@@ -95,8 +95,8 @@ private:
 
     QBasicTimer timer;
     QMutex imageMutex;
-    QMutex mouseMutex;
-    QWaitCondition mouseCondition;
+    QMutex inputMutex;
+    QWaitCondition inputCondition;
     QMutex syncMutex;
     QWaitCondition syncCondition;
     bool terminateThread;

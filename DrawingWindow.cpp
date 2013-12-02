@@ -665,11 +665,11 @@ bool DrawingWindow::waitMousePress(int &x, int &y, int &button,
                                    unsigned long time)
 {
     bool pressed;
-    safeLock(mouseMutex);
+    safeLock(inputMutex);
     if (terminateThread) {
         pressed = false;
     } else {
-        pressed = mouseCondition.wait(&mouseMutex, time) && !terminateThread;
+        pressed = inputCondition.wait(&inputMutex, time) && !terminateThread;
         if (pressed) {
             x = mousePos.x();
             y = mousePos.y();
@@ -683,7 +683,7 @@ bool DrawingWindow::waitMousePress(int &x, int &y, int &button,
                 button = 0;
         }
     }
-    safeUnlock(mouseMutex);
+    safeUnlock(inputMutex);
     return pressed;
 }
 
@@ -753,7 +753,7 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
     timer.stop();
     thread->exit();
     syncMutex.lock();
-    mouseMutex.lock();
+    inputMutex.lock();
     terminateThread = true;     // this flag is needed for the case
                                 // where the following wakeAll() call
                                 // occurs between the
@@ -761,8 +761,8 @@ void DrawingWindow::closeEvent(QCloseEvent *ev)
                                 // mutex lock in safeLock() called
                                 // from sync()
     syncCondition.wakeAll();
-    mouseCondition.wakeAll();
-    mouseMutex.unlock();
+    inputCondition.wakeAll();
+    inputMutex.unlock();
     syncMutex.unlock();
     QWidget::closeEvent(ev);
     if (!thread->wait(250)) {
@@ -797,12 +797,12 @@ void DrawingWindow::customEvent(QEvent *ev)
  */
 void DrawingWindow::mousePressEvent(QMouseEvent *ev)
 {
-    mouseMutex.lock();
+    inputMutex.lock();
     mousePos = ev->pos();
     mouseButton = ev->button();
     ev->accept();
-    mouseCondition.wakeAll();
-    mouseMutex.unlock();
+    inputCondition.wakeAll();
+    inputMutex.unlock();
 }
 
 /*!
