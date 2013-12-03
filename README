@@ -1,0 +1,10 @@
+Little graphics library.
+Copyright (c) 2007-2013, Arnaud Giersch <arnaud.giersch@iut-bm.univ-fcomte.fr>
+
+This is a little library based on the Qt framework to write simple
+programs with graphics in C++.
+
+It is not designed to write "real" programs, but rather to write toy
+programs in beginners programming courses.
+
+See the examples and documentation (in French) for details.
