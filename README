@@ -1,5 +1,5 @@
 Little graphics library.
-Copyright (c) 2007-2013, Arnaud Giersch <arnaud.giersch@iut-bm.univ-fcomte.fr>
+Copyright (c) 2007-2013, Arnaud Giersch.
 
 This is a little library based on the Qt framework to write simple
 programs with graphics in C++.
