@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007-2013, Arnaud Giersch <arnaud.giersch@iut-bm.univ-fcomte.fr>
+ * Copyright (c) 2007-2013, Arnaud Giersch <arnaud.giersch@univ-fcomte.fr>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
 /*! \class DrawingWindow
  *  \brief Fenêtre de dessin.
  *
- * \author Arnaud Giersch <arnaud.giersch@iut-bm.univ-fcomte.fr>
+ * \author Arnaud Giersch <arnaud.giersch@univ-fcomte.fr>
  * \date 2007-2013
  *
  * Cette classe décrit un widget Qt permettant d'écrire des
