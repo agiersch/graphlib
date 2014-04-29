@@ -10,7 +10,7 @@ SRC += exemple.cpp exemple.pro
 .PHONY: help generate install install_www
 
 help:
-	@echo "Usage: ./INSTALL generate | install | install_www"
+	@echo "Usage: $(MAKEFILE_LIST) generate | install | install_www"
 
 generate:
 	rm -fr html/
