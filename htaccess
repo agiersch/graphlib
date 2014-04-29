@@ -1,2 +1,4 @@
 AddType text/plain    cpp h pro
 AddCharset utf-8 cpp h pro
+
+Allow from All
